@@ -2,12 +2,19 @@ package repository
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
+	"log"
 
 	"github.com/go-sql-driver/mysql"
 	"github.com/sijanstha/electronic-voting-system/internal/core/domain"
 	commonError "github.com/sijanstha/electronic-voting-system/internal/core/error"
 	"github.com/sijanstha/electronic-voting-system/internal/core/ports"
+	"github.com/sijanstha/electronic-voting-system/internal/core/utils"
+)
+
+const (
+	SELECT_POLL_INFO_LOC string = "./resources/sql/SelectPollInfo.sql"
 )
 
 type pollMysqlRepository struct {
@@ -40,8 +47,43 @@ func (r *pollMysqlRepository) SavePoll(poll *domain.Poll) (*domain.Poll, error) 
 	return poll, nil
 }
 
-func (r *pollMysqlRepository) FindPollById(id int64) (*domain.Poll, error) {
-	return nil, nil
+func (r *pollMysqlRepository) FindPoll(filter domain.PollFilter) (*domain.PollInfo, error) {
+	query, err := utils.LoadResourceAsString(SELECT_POLL_INFO_LOC)
+	if err != nil {
+		return nil, err
+	}
+
+	condition := "1=1"
+	if filter.Id > 0 {
+		condition += " and p.id = " + fmt.Sprintf("%d", filter.Id)
+	}
+
+	if filter.Title != "" && len(filter.Title) > 0 {
+		condition += " and p.title = '" + filter.Title + "'"
+	}
+
+	finalSelectQuery := fmt.Sprintf(query, condition)
+	log.Println("query: ", finalSelectQuery)
+
+	pollInfoJson := new(string)
+	result := r.db.QueryRow(finalSelectQuery)
+
+	if err := result.Scan(pollInfoJson); err != nil {
+		log.Println(err)
+		return nil, err
+	}
+
+	pollDatabaseView := new(domain.PollDatabaseView)
+	err = json.Unmarshal([]byte(*pollInfoJson), pollDatabaseView)
+	if err != nil {
+		return nil, err
+	}
+
+	if pollDatabaseView.Id == 0 {
+		return nil, &commonError.ErrNotFound{Message: "poll not found"}
+	}
+
+	return pollDatabaseView.ToPollInfo(), nil
 }
 
 func (r *pollMysqlRepository) Init() error {

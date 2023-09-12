@@ -54,6 +54,15 @@ func (s *pollService) SavePoll(ctx context.Context, req *domain.CreatePollReques
 	return savedPoll, nil
 }
 
-func (s *pollService) GetPollById(id int64) (*domain.Poll, error) {
-	return nil, nil
+func (s *pollService) GetPollById(id int64) (*domain.PollInfo, error) {
+	filter := domain.PollFilter{
+		Id: id,
+	}
+
+	poll, err := s.pollRepo.FindPoll(filter)
+	if err != nil {
+		return nil, err
+	}
+
+	return poll, nil
 }

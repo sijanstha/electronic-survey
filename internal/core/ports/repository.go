@@ -8,7 +8,7 @@ type BaseRepository interface {
 
 type PollRepository interface {
 	SavePoll(*domain.Poll) (*domain.Poll, error)
-	FindPollById(int64) (*domain.Poll, error)
+	FindPoll(domain.PollFilter) (*domain.PollInfo, error)
 	BaseRepository
 }
 
