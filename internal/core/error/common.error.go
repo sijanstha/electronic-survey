@@ -1,5 +1,13 @@
 package commonError
 
+import "errors"
+
+var (
+	ErrFilterConditionMissing = errors.New("provide at least one filter condition")
+	ErrInvalidSortingField    = errors.New("invalid sorting field")
+	ErrInvalidSortingOrder    = errors.New("invalid sorting order")
+)
+
 type ErrUniqueConstraintViolation struct {
 	Message string
 }

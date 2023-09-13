@@ -49,3 +49,20 @@ type PollOrganizer struct {
 	PollId           int64 `json:"pollId"`
 	PrimaryOrganizer bool  `json:"primaryOrganizer"`
 }
+
+type PaginationDetails struct {
+	Size  int `json:"pageSize"`
+	Page  int `json:"page"`
+	Total int `json:"totalRecords"`
+}
+
+type PollWithOrganizerInfo struct {
+	Poll
+	FullName string `json:"organizerName"`
+	Email string `json:"organizerEmail"`
+}
+
+type PollPaginationDetails struct {
+	PaginationDetails
+	Data []PollWithOrganizerInfo `json:"data"`
+}

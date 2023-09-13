@@ -7,12 +7,12 @@ select json_object(
                'endsAt', date_format(res.ends_at, '%%Y-%%m-%%dT%%H:%%i:%%S'),
                'createdAt', date_format(res.created_at, '%%Y-%%m-%%dT%%H:%%i:%%S'),
                'updatedAt', date_format(res.updated_at, '%%Y-%%m-%%dT%%H:%%i:%%S'),
-               'pollOwners', json_arrayagg(
+               'pollOrganizers', json_arrayagg(
                        json_object(
                                'email', res.email,
                                'fullName', res.name,
                                'id', res.organizerId,
-                               'primaryOwner', res.primaryOrganizer
+                               'primaryOrganizer', res.primaryOrganizer
                            )
                    )
            )

@@ -14,7 +14,8 @@ import (
 )
 
 const (
-	SELECT_POLL_INFO_LOC string = "./resources/sql/SelectPollInfo.sql"
+	SELECT_POLL_INFO_LOC        string = "./resources/sql/SelectPollInfo.sql"
+	SELECT_POLL_WITH_PAGINATION string = "./resources/sql/SelectPollWithPagination.sql"
 )
 
 type pollMysqlRepository struct {
@@ -84,6 +85,85 @@ func (r *pollMysqlRepository) FindPoll(filter domain.PollFilter) (*domain.PollIn
 	}
 
 	return pollDatabaseView.ToPollInfo(), nil
+}
+
+func (r *pollMysqlRepository) FindAllPoll(filter domain.PollListFilter) (*domain.PollPaginationDetails, error) {
+	result := &domain.PollPaginationDetails{
+		Data: []domain.PollWithOrganizerInfo{},
+	}
+	query, err := utils.LoadResourceAsString(SELECT_POLL_WITH_PAGINATION)
+	if err != nil {
+		return nil, err
+	}
+
+	countQuery := "select count(p.id) from poll p left join poll_organizer po on p.id = po.fk_poll_id where %s"
+
+	args := make([]interface{}, 0)
+	var condition string = "1 = 1 "
+	if filter.State != "" && len(filter.State) > 0 {
+		condition += "and p.state = ? "
+		args = append(args, filter.State)
+	}
+
+	if filter.OrganizerId > 0 {
+		condition += "and po.fk_organizer_id = ? "
+		args = append(args, filter.OrganizerId)
+	}
+
+	offset := (filter.Page - 1) * filter.Limit
+	finalSelectQuery := fmt.Sprintf(query, condition, "p."+filter.SortBy, filter.Sort, filter.Limit, offset)
+	log.Println("final select query: ", finalSelectQuery)
+	finalCountRowsQuery := fmt.Sprintf(countQuery, condition)
+	log.Println("final count query: ", finalCountRowsQuery)
+
+	selectStmt, err := r.db.Prepare(finalSelectQuery)
+	if err != nil {
+		log.Println("invalid query", err)
+		return nil, err
+	}
+	defer selectStmt.Close()
+
+	countRowsStmt, err := r.db.Prepare(finalCountRowsQuery)
+	if err != nil {
+		log.Println("invalid query", err)
+		return nil, err
+	}
+	defer countRowsStmt.Close()
+
+	var count int
+	countResult := countRowsStmt.QueryRow(args...)
+	if err := countResult.Scan(&count); err != nil {
+		log.Println("No any user record in database", err)
+		return result, nil
+	}
+
+	rows, err := selectStmt.Query(args...)
+	if err != nil {
+		log.Println("No data present")
+		return result, nil
+	}
+	defer rows.Close()
+
+	result.Page = int(filter.Page)
+	result.Total = count
+	for rows.Next() {
+		poll := domain.PollWithOrganizerInfo{}
+		rows.Scan(
+			&poll.Id,
+			&poll.Title,
+			&poll.Description,
+			&poll.StartsAt,
+			&poll.EndsAt,
+			&poll.State,
+			&poll.CreatedAt,
+			&poll.UpdatedAt,
+			&poll.FullName,
+			&poll.Email,
+		)
+		result.Data = append(result.Data, poll)
+	}
+	result.Size = len(result.Data)
+	return result, nil
 }
 
 func (r *pollMysqlRepository) Init() error {

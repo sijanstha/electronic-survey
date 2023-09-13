@@ -3,6 +3,7 @@ package utils
 import (
 	"net/mail"
 	"os"
+	"strconv"
 	"strings"
 
 	commonError "github.com/sijanstha/electronic-voting-system/internal/core/error"
@@ -31,4 +32,12 @@ func LoadResourceAsString(path string) (string, error) {
 	}
 
 	return strings.TrimSpace(string(data)), nil
+}
+
+func ParseInteger(str string) int64 {
+	data, err := strconv.ParseInt(str, 10, 64)
+	if err != nil {
+		return 0
+	}
+	return data
 }

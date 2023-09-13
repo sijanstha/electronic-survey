@@ -2,55 +2,55 @@ package domain
 
 import "github.com/sijanstha/electronic-voting-system/internal/core/utils"
 
-type PollOwnerDatabaseView struct {
-	Id           int64  `json:"id"`
-	FullName     string `json:"fullName"`
-	Email        string `json:"email"`
-	PrimaryOwner int    `json:"primaryOwner"`
+type PollOrganizerDatabaseView struct {
+	Id               int64  `json:"id"`
+	FullName         string `json:"fullName"`
+	Email            string `json:"email"`
+	PrimaryOrganizer int    `json:"primaryOrganizer"`
 }
 
 type PollDatabaseView struct {
-	Title       string                  `json:"title"`
-	Description string                  `json:"description"`
-	State       PollState               `json:"state"`
-	StartsAt    string                  `json:"startsAt"`
-	EndsAt      string                  `json:"endsAt"`
-	Id          int64                   `json:"id"`
-	CreatedAt   string                  `json:"createdAt"`
-	UpdatedAt   string                  `json:"updatedAt"`
-	PollOwners  []PollOwnerDatabaseView `json:"pollOwners"`
+	Title          string                      `json:"title"`
+	Description    string                      `json:"description"`
+	State          PollState                   `json:"state"`
+	StartsAt       string                      `json:"startsAt"`
+	EndsAt         string                      `json:"endsAt"`
+	Id             int64                       `json:"id"`
+	CreatedAt      string                      `json:"createdAt"`
+	UpdatedAt      string                      `json:"updatedAt"`
+	PollOrganizers []PollOrganizerDatabaseView `json:"pollOrganizers"`
 }
 
-type PollOwnerInfo struct {
-	Id           int64  `json:"id"`
-	FullName     string `json:"fullName"`
-	Email        string `json:"email"`
-	PrimaryOwner bool   `json:"primaryOwner"`
+type PollOrganizerInfo struct {
+	Id               int64  `json:"id"`
+	FullName         string `json:"fullName"`
+	Email            string `json:"email"`
+	PrimaryOrganizer bool   `json:"primaryOrganizer"`
 }
 
 type PollInfo struct {
 	Poll
-	PollOwners []PollOwnerInfo `json:"pollOwners"`
+	PollOrganizers []PollOrganizerInfo `json:"pollOrganizers"`
 }
 
-func (p *PollOwnerDatabaseView) ToPollOwnerInfo() PollOwnerInfo {
-	isPrimaryOwner := false
-	if p.PrimaryOwner == 1 {
-		isPrimaryOwner = true
+func (p *PollOrganizerDatabaseView) ToPollOrganizerInfo() PollOrganizerInfo {
+	isPrimaryOrganizer := false
+	if p.PrimaryOrganizer == 1 {
+		isPrimaryOrganizer = true
 	}
 
-	return PollOwnerInfo{
-		Id:           p.Id,
-		FullName:     p.FullName,
-		Email:        p.Email,
-		PrimaryOwner: isPrimaryOwner,
+	return PollOrganizerInfo{
+		Id:               p.Id,
+		FullName:         p.FullName,
+		Email:            p.Email,
+		PrimaryOrganizer: isPrimaryOrganizer,
 	}
 }
 
 func (p *PollDatabaseView) ToPollInfo() *PollInfo {
-	pollOwners := make([]PollOwnerInfo, 0)
-	for _, data := range p.PollOwners {
-		pollOwners = append(pollOwners, data.ToPollOwnerInfo())
+	pollOrganizers := make([]PollOrganizerInfo, 0)
+	for _, data := range p.PollOrganizers {
+		pollOrganizers = append(pollOrganizers, data.ToPollOrganizerInfo())
 	}
 
 	pollInfo := &PollInfo{
@@ -66,7 +66,7 @@ func (p *PollDatabaseView) ToPollInfo() *PollInfo {
 			EndsAt:      utils.FormatDateTime(p.EndsAt),
 			State:       p.State,
 		},
-		PollOwners: pollOwners,
+		PollOrganizers: pollOrganizers,
 	}
 
 	return pollInfo

@@ -9,6 +9,7 @@ import (
 type PollService interface {
 	SavePoll(context.Context, *domain.CreatePollRequest) (*domain.Poll, error)
 	GetPollById(int64) (*domain.PollInfo, error)
+	GetAllPoll(domain.PollListFilter) (*domain.PollPaginationDetails, error)
 }
 
 type UserService interface {

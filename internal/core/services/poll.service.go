@@ -66,3 +66,11 @@ func (s *pollService) GetPollById(id int64) (*domain.PollInfo, error) {
 
 	return poll, nil
 }
+
+func (s *pollService) GetAllPoll(req domain.PollListFilter) (*domain.PollPaginationDetails, error) {
+	if err := req.Validate(); err != nil {
+		return nil, commonError.NewErrBadRequest(err.Error())
+	}
+
+	return s.pollRepo.FindAllPoll(req)
+}
