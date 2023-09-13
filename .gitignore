@@ -7,6 +7,9 @@
 
 /bin
 
+.mysql/
+init-db/
+
 # testing
 /coverage
 

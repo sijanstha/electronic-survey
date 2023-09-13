@@ -1,6 +1,10 @@
 package ports
 
-import "github.com/sijanstha/electronic-voting-system/internal/core/domain"
+import (
+	"time"
+
+	"github.com/sijanstha/electronic-voting-system/internal/core/domain"
+)
 
 type BaseRepository interface {
 	Init() error
@@ -10,6 +14,8 @@ type PollRepository interface {
 	SavePoll(*domain.Poll) (*domain.Poll, error)
 	FindPoll(domain.PollFilter) (*domain.PollInfo, error)
 	FindAllPoll(domain.PollListFilter) (*domain.PollPaginationDetails, error)
+	FindAllPollInStartedStateInDateRange(from time.Time, to time.Time) ([]*domain.Poll, error)
+	FindAllPollInVotingStateInDateRange(from time.Time, to time.Time) ([]*domain.Poll, error)
 	BaseRepository
 }
 

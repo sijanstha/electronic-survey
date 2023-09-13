@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"strings"
+	"time"
 
 	"github.com/go-sql-driver/mysql"
 	"github.com/sijanstha/electronic-voting-system/internal/core/domain"
@@ -177,6 +178,56 @@ func (r *pollMysqlRepository) FindAllPoll(filter domain.PollListFilter) (*domain
 	return result, nil
 }
 
+func (r *pollMysqlRepository) FindAllPollInStartedStateInDateRange(from time.Time, to time.Time) ([]*domain.Poll, error) {
+	query := `select 
+			id, title, state, description, starts_at, ends_at, created_at, updated_at 
+			from Poll p 
+			where p.state = ? 
+			and p.starts_at >= ? 
+			and p.starts_at < ?`
+
+	rows, err := r.db.Query(query, domain.STARTED, from, to)
+	if err != nil {
+		return nil, err
+	}
+
+	polls := make([]*domain.Poll, 0)
+	for rows.Next() {
+		poll, err := r.scanPollRow(rows)
+		if err != nil {
+			return nil, err
+		}
+		polls = append(polls, poll)
+	}
+
+	return polls, nil
+}
+
+func (r *pollMysqlRepository) FindAllPollInVotingStateInDateRange(from time.Time, to time.Time) ([]*domain.Poll, error) {
+	query := `select 
+			id, title, state, description, starts_at, ends_at, created_at, updated_at 
+			from Poll p 
+			where p.state = ? 
+			and p.ends_at >= ? 
+			and p.ends_at < ?`
+
+	rows, err := r.db.Query(query, domain.VOTING, from, to)
+	if err != nil {
+		return nil, err
+	}
+
+	polls := make([]*domain.Poll, 0)
+	for rows.Next() {
+		poll, err := r.scanPollRow(rows)
+		if err != nil {
+			return nil, err
+		}
+		polls = append(polls, poll)
+	}
+
+	return polls, nil
+}
+
 func (r *pollMysqlRepository) Init() error {
 	query := `
 		create table if not exists poll (
@@ -196,4 +247,22 @@ func (r *pollMysqlRepository) Init() error {
 	}
 
 	return nil
+}
+
+func (r *pollMysqlRepository) scanPollRow(rows *sql.Rows) (*domain.Poll, error) {
+	poll := new(domain.Poll)
+	err := rows.Scan(&poll.Id,
+		&poll.Title,
+		&poll.State,
+		&poll.Description,
+		&poll.StartsAt,
+		&poll.EndsAt,
+		&poll.CreatedAt,
+		&poll.UpdatedAt,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return poll, nil
 }

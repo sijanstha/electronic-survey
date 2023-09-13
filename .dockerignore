@@ -1,0 +1,12 @@
+bin/
+frontend/
+.env
+.gitignore
+.git/
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.mysql/
+init-db/

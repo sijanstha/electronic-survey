@@ -22,14 +22,9 @@ func NewPollService(repo ports.PollRepository, pollOrganizerRepo ports.PollOrgan
 }
 
 func (s *pollService) SavePoll(ctx context.Context, req *domain.CreatePollRequest) (*domain.Poll, error) {
-	principal := ctx.Value("principal")
-	if principal == nil {
-		return nil, &commonError.ErrUnauthorized{Message: "unauthorized"}
-	}
-
-	claims, ok := principal.(*domain.Claims)
-	if !ok {
-		return nil, &commonError.ErrInternalServer{Message: "couldn't parse jwt claims"}
+	claims, err := getCurrentLoggedInUser(ctx)
+	if err != nil {
+		return nil, err
 	}
 
 	log.Println("claims: ", claims.ID)
@@ -71,14 +66,10 @@ func (s *pollService) GetAllPoll(ctx context.Context, req domain.PollListFilter)
 	if err := req.Validate(); err != nil {
 		return nil, commonError.NewErrBadRequest(err.Error())
 	}
-	principal := ctx.Value("principal")
-	if principal == nil {
-		return nil, &commonError.ErrUnauthorized{Message: "unauthorized"}
-	}
-
-	claims, ok := principal.(*domain.Claims)
-	if !ok {
-		return nil, &commonError.ErrInternalServer{Message: "couldn't parse jwt claims"}
+	
+	claims, err := getCurrentLoggedInUser(ctx)
+	if err != nil {
+		return nil, err
 	}
 
 	req.OrganizerId = claims.Id

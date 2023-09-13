@@ -14,7 +14,7 @@ type PollFilter struct {
 
 type PollListFilter struct {
 	PaginationFilter
-	States              []PollState `json:"state"`
-	OrganizerId        int64     `json:"organizerId"`
+	States             []PollState `json:"state"`
+	OrganizerId        int64       `json:"organizerId"`
 	FilterPrimaryOwner *bool
 }

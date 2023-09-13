@@ -15,3 +15,15 @@ run: build
 
 test:
 	@go test -v ./backend/...
+
+container-ls:
+	docker container ls
+
+container-logs:
+	docker container logs $(id)
+
+start:
+	docker compose -f docker-compose.yml up -d --build
+
+stop:
+	docker compose -f docker-compose.yml down
