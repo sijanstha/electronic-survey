@@ -17,13 +17,16 @@ test:
 	@go test -v ./backend/...
 
 container-ls:
-	docker container ls
+	@docker container ls
 
 container-logs:
-	docker container logs $(id)
+	@docker container logs $(id)
 
 start:
-	docker compose -f docker-compose.yml up -d --build
+	@docker compose -f docker-compose.yml up -d --build
 
 stop:
-	docker compose -f docker-compose.yml down
+	@docker compose -f docker-compose.yml down
+
+create-network:
+	@docker network create evs-network
