@@ -67,10 +67,20 @@ func (s *pollService) GetPollById(id int64) (*domain.PollInfo, error) {
 	return poll, nil
 }
 
-func (s *pollService) GetAllPoll(req domain.PollListFilter) (*domain.PollPaginationDetails, error) {
+func (s *pollService) GetAllPoll(ctx context.Context, req domain.PollListFilter) (*domain.PollPaginationDetails, error) {
 	if err := req.Validate(); err != nil {
 		return nil, commonError.NewErrBadRequest(err.Error())
 	}
+	principal := ctx.Value("principal")
+	if principal == nil {
+		return nil, &commonError.ErrUnauthorized{Message: "unauthorized"}
+	}
 
+	claims, ok := principal.(*domain.Claims)
+	if !ok {
+		return nil, &commonError.ErrInternalServer{Message: "couldn't parse jwt claims"}
+	}
+
+	req.OrganizerId = claims.Id
 	return s.pollRepo.FindAllPoll(req)
 }

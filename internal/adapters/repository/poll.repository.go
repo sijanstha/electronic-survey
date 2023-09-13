@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"strings"
 
 	"github.com/go-sql-driver/mysql"
 	"github.com/sijanstha/electronic-voting-system/internal/core/domain"
@@ -100,14 +101,24 @@ func (r *pollMysqlRepository) FindAllPoll(filter domain.PollListFilter) (*domain
 
 	args := make([]interface{}, 0)
 	var condition string = "1 = 1 "
-	if filter.State != "" && len(filter.State) > 0 {
-		condition += "and p.state = ? "
-		args = append(args, filter.State)
+	if filter.States != nil && len(filter.States) > 0 {
+		placeholder := ""
+		for _, data := range filter.States {
+			placeholder += "?,"
+			args = append(args, data)
+		}
+		placeholder = strings.TrimSuffix(placeholder, ",")
+		condition += fmt.Sprintf("and p.state in (%s) ", placeholder)
 	}
 
 	if filter.OrganizerId > 0 {
 		condition += "and po.fk_organizer_id = ? "
 		args = append(args, filter.OrganizerId)
+	}
+
+	if filter.FilterPrimaryOwner != nil {
+		condition += "and po.primary_organizer = ? "
+		args = append(args, filter.FilterPrimaryOwner)
 	}
 
 	offset := (filter.Page - 1) * filter.Limit

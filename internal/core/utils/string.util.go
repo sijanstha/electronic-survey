@@ -41,3 +41,12 @@ func ParseInteger(str string) int64 {
 	}
 	return data
 }
+
+func ParseBoolean(str string) *bool {
+	b := false
+	if str == "true" {
+		b = true
+	}
+
+	return &b
+}

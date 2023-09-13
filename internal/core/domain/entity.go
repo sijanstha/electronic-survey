@@ -58,8 +58,8 @@ type PaginationDetails struct {
 
 type PollWithOrganizerInfo struct {
 	Poll
-	FullName string `json:"organizerName"`
-	Email string `json:"organizerEmail"`
+	FullName string `json:"primaryOrganizerName"`
+	Email string `json:"primaryOrganizerEmail"`
 }
 
 type PollPaginationDetails struct {
