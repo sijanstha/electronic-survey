@@ -10,6 +10,9 @@ uibuild:
 uiinstall:
 	@yarn --cwd ./frontend/evs install
 
+uiadd:
+	yarn --cwd ./frontend/evs add $(package)
+
 run: build
 	@./bin/evs
 
