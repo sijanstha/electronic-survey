@@ -8,7 +8,11 @@ require (
 	golang.org/x/crypto v0.13.0
 )
 
+require github.com/felixge/httpsnoop v1.0.1 // indirect
+
 require (
 	github.com/golang-jwt/jwt/v5 v5.0.0 // indirect
+	github.com/gorilla/handlers v1.5.1
 	github.com/joho/godotenv v1.5.1
+	github.com/rs/cors v1.10.0
 )

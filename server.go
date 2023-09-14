@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/rs/cors"
 	"github.com/sijanstha/electronic-voting-system/internal/adapters/handler"
 	"github.com/sijanstha/electronic-voting-system/internal/adapters/repository"
 	"github.com/sijanstha/electronic-voting-system/internal/core/domain"
@@ -48,8 +49,15 @@ func (s *ApiServer) Run() {
 	s.registerPublicRoutes(router)
 	s.registerPollRoutes(router)
 
+	c := cors.New(cors.Options{
+		AllowedOrigins:   []string{"http://localhost:3000"},
+		AllowCredentials: true,
+	})
+
+	handler := c.Handler(router)
+
 	log.Println("electronic-voting-system API running at port: ", s.listenAddr)
-	http.ListenAndServe(s.listenAddr, router)
+	http.ListenAndServe(s.listenAddr, handler)
 }
 
 func (s *ApiServer) registerPollRoutes(router *mux.Router) {
