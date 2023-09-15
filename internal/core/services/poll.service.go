@@ -75,6 +75,10 @@ func (s *pollService) UpdatePoll(ctx context.Context, req *domain.UpdatePollRequ
 		return nil, &commonError.ErrUnauthorized{Message: fmt.Sprintf("you are not authorized to update this poll: %d, please contact poll owner", req.Id)}
 	}
 
+	if poll.State != domain.PREPARED {
+		return nil, commonError.NewErrBadRequest(fmt.Sprintf("poll with state %s is not allowed for modification", poll.State))
+	}
+
 	// input validations
 	var startsAt, endsAt time.Time
 	if req.StartsAt != "" && len(req.StartsAt) > 0 {
