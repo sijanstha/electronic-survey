@@ -28,6 +28,10 @@ func (h *pollHandler) HandlePoll(w http.ResponseWriter, r *http.Request) error {
 		return h.handleSavePoll(w, r)
 	}
 
+	if r.Method == "PUT" {
+		return h.handleUpdatePoll(w, r)
+	}
+
 	if r.Method == "GET" {
 		return h.handleGetPoll(w, r)
 	}
@@ -43,6 +47,21 @@ func (h *pollHandler) handleSavePoll(w http.ResponseWriter, r *http.Request) err
 	}
 
 	res, err := h.pollService.SavePoll(r.Context(), createPollRequest)
+	if err != nil {
+		return err
+	}
+
+	return utils.WriteJSON(w, http.StatusOK, domain.NewApiResponse(res))
+}
+
+func (h *pollHandler) handleUpdatePoll(w http.ResponseWriter, r *http.Request) error {
+	updatePollRequest := new(domain.UpdatePollRequest)
+	err := json.NewDecoder(r.Body).Decode(updatePollRequest)
+	if err != nil {
+		return err
+	}
+
+	res, err := h.pollService.UpdatePoll(r.Context(), updatePollRequest)
 	if err != nil {
 		return err
 	}

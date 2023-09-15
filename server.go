@@ -62,7 +62,7 @@ func (s *ApiServer) Run() {
 
 func (s *ApiServer) registerPollRoutes(router *mux.Router) {
 	pollHandler := handler.NewPollHandler(pollService)
-	router.HandleFunc("/poll", authMiddleware(makeHTTPHandleFunc(pollHandler.HandlePoll))).Methods("POST", "GET")
+	router.HandleFunc("/poll", authMiddleware(makeHTTPHandleFunc(pollHandler.HandlePoll))).Methods("POST", "PUT", "GET")
 	router.HandleFunc("/poll/{id}", authMiddleware(makeHTTPHandleFunc(pollHandler.HandleGetPollById))).Methods("GET")
 }
 

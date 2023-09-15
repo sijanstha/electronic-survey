@@ -12,6 +12,7 @@ type BaseRepository interface {
 
 type PollRepository interface {
 	SavePoll(*domain.Poll) (*domain.Poll, error)
+	UpdatePoll(*domain.Poll) (*domain.Poll, error)
 	FindPoll(domain.PollFilter) (*domain.PollInfo, error)
 	FindAllPoll(domain.PollListFilter) (*domain.PollPaginationDetails, error)
 	FindAllPollInStartedStateInDateRange(from time.Time, to time.Time) ([]*domain.Poll, error)

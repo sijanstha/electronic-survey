@@ -47,7 +47,7 @@ func (c *CreatePollRequest) Validate() (*Poll, error) {
 		return nil, commonError.NewErrBadRequest("end date should be after start date")
 	}
 
-	return NewPoll(c.Title, c.Description, startsAt, endsAt), nil
+	return NewPoll(0, c.Title, c.Description, startsAt, endsAt, PREPARED, false), nil
 }
 
 func (c *CreateUserRequest) Validate() (*User, error) {

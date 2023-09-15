@@ -8,6 +8,7 @@ import (
 
 type PollService interface {
 	SavePoll(context.Context, *domain.CreatePollRequest) (*domain.Poll, error)
+	UpdatePoll(context.Context, *domain.UpdatePollRequest) (*domain.Poll, error)
 	GetPollById(int64) (*domain.PollInfo, error)
 	GetAllPoll(context.Context, domain.PollListFilter) (*domain.PollPaginationDetails, error)
 }

@@ -7,6 +7,12 @@ type CreatePollRequest struct {
 	EndsAt      string `json:"endsAt"`
 }
 
+type UpdatePollRequest struct {
+	CreatePollRequest
+	Id          int64 `json:"id"`
+	OrganizerId int64 `json:"organizerId"`
+}
+
 type CreateUserRequest struct {
 	FirstName string `json:"firstName"`
 	LastName  string `json:"lastName"`

@@ -50,6 +50,66 @@ func (r *pollMysqlRepository) SavePoll(poll *domain.Poll) (*domain.Poll, error) 
 	return poll, nil
 }
 
+func (r *pollMysqlRepository) UpdatePoll(poll *domain.Poll) (*domain.Poll, error) {
+	query := "update poll set %s where id = ?"
+
+	args := make([]interface{}, 0)
+	var values string
+	if poll.Title != "" && len(poll.Title) > 0 {
+		values += "title=?,"
+		args = append(args, poll.Title)
+	}
+
+	if poll.Description != "" && len(poll.Description) > 0 {
+		values += "description=?,"
+		args = append(args, poll.Description)
+	}
+
+	if poll.State != "" && len(poll.State) > 0 {
+		values += "state=?,"
+		args = append(args, poll.State)
+	}
+
+	if !poll.StartsAt.IsZero() {
+		values += "starts_at=?,"
+		args = append(args, poll.StartsAt)
+	}
+
+	if !poll.EndsAt.IsZero() {
+		values += "ends_at=?,"
+		args = append(args, poll.EndsAt)
+	}
+
+	if !poll.UpdatedAt.IsZero() {
+		values += "updated_at=?,"
+		args = append(args, poll.UpdatedAt)
+	}
+
+	values = strings.TrimSuffix(values, ",")
+	args = append(args, poll.Id)
+
+	finalUpdateQuery := fmt.Sprintf(query, values)
+	log.Printf("Poll Update Query: %s", finalUpdateQuery)
+
+	stmt, err := r.db.Prepare(finalUpdateQuery)
+	if err != nil {
+		return nil, err
+	}
+	defer stmt.Close()
+
+	_, err = stmt.Exec(args...)
+	me, ok := err.(*mysql.MySQLError)
+	if !ok && me != nil {
+		return nil, &commonError.ErrInternalServer{Message: err.Error()}
+	}
+
+	if me != nil && me.Number == 1062 {
+		return nil, &commonError.ErrUniqueConstraintViolation{Message: fmt.Sprintf("poll with title %s already exists", poll.Title)}
+	}
+
+	return poll, nil
+}
+
 func (r *pollMysqlRepository) FindPoll(filter domain.PollFilter) (*domain.PollInfo, error) {
 	query, err := utils.LoadResourceAsString(SELECT_POLL_INFO_LOC)
 	if err != nil {
