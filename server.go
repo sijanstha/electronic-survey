@@ -52,6 +52,7 @@ func (s *ApiServer) Run() {
 	c := cors.New(cors.Options{
 		AllowedOrigins:   []string{"http://localhost:3000"},
 		AllowCredentials: true,
+		AllowedHeaders: []string{"Accept", "Content-Type", "X-Authorization", "Referer"},
 	})
 
 	handler := c.Handler(router)

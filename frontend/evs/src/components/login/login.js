@@ -57,6 +57,7 @@ class Login extends Component {
 
     login = (e) => {
         e.preventDefault();
+
         let errors = this.validateLoginForm();
         if (errors === true) {
             const { formData } = this.state;
