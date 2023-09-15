@@ -10,6 +10,7 @@ import (
 var (
 	validSortingField = map[string]bool{
 		"title":       true,
+		"state":       true,
 		"created_at":  true,
 		"updated_at":  true,
 		"description": true,
