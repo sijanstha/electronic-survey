@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import "./login.css";
 import {
   isContainWhiteSpace,
@@ -7,80 +6,70 @@ import {
   isEmpty,
   isLength,
 } from "../../shared/validator";
-import axios from "axios";
+import { axiosInstance } from "../../axiosConfig";
+import { useAuth } from "../../provider/authProvider";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
-  const [formState, setFormState] = useState({
-    formData: {email:'',password:""}, // Contains login form data
-    errors: { email: "", password: "" }, // Contains login field errors
-    formSubmitted: false, // Indicates submit status of login form
-    loading: false, // Indicates in progress state of login form
-  });
-//   const navigate = useNavigate();
+  const { setToken } = useAuth();
+  const navigate = useNavigate();
 
-  const validateLoginForm = (e) => {
-    // let errors = {};
+  const [formState, setFormState] = useState({
+    formData: { email: '', password: "" },
+    errors: { email: "", password: "" }
+  });
+
+  const validateLoginForm = () => {
+    let errors = {};
     const { formData } = formState;
 
     if (isEmpty(formData.email)) {
-      // errors.email = "Email can't be blank";
-      setFormState({ errors: { email: `Email can't be blank` } });
+      errors.email = "Email can't be blank";
     } else if (!isEmail(formData.email)) {
-      // errors.email = "Please enter a valid email";
-      setFormState({ errors: { email: `Please enter a valid email` } });
+      errors.email = "Please enter a valid email";
     }
 
     if (isEmpty(formData.password)) {
-      // errors.password = "Password can't be blank";
-      setFormState({ errors: { password: `Password can't be blank` } });
+      errors.password = "Password can't be blank";
     } else if (isContainWhiteSpace(formData.password)) {
-      // errors.password = "Password should not contain white spaces";
-      setFormState({
-        errors: { password: `Password should not contain white spaces` },
-      });
+      errors.password = "Password should not contain white spaces";
     } else if (!isLength(formData.password, { gte: 5, lte: 15, trim: true })) {
-      // errors.password = "Password's length must between 5 to 15";
-      setFormState({
-        errors: { password: `Password's length must between 5 to 15` },
-      });
+      errors.password = "Password's length must between 5 to 15";
     }
 
-    if (isEmpty(formState.errors)) {
-      return true;
-    } else {
-      return formState.errors;
-    }
+    setFormState((prevState) => ({
+      ...prevState,
+      errors: errors,
+    }));
+
+    return errors;
   };
 
-  const login = (e) => {
+  const login = async (e) => {
     e.preventDefault();
 
-    // let errors = validateLoginForm();
-    if (true) {
+    let errors = validateLoginForm();
+
+    if (isEmpty(errors)) {
       const { formData } = formState;
-      axios
-        .post("/login", {
+
+      try {
+        const resp = await axiosInstance.post("/login", {
           email: formData.email,
           password: formData.password,
-        })
-        .then((resp) => {
-          alert("You are successfully signed in...");
-          console.log(resp);
-          const { data } = resp.data;
-          localStorage.setItem("token", data.token);
-        //   navigate("/poll");
-          //   window.location.reload();
-        })
-        .catch((err) => {
-          console.log(err);
         });
-    } else {
-      //   setState({
-      //     errors: errors,
-      //     formSubmitted: true,
-      //   });
-
-    //   setFormState({ errors: errors, formSubmitted: true });
+        const { body } = resp.data;
+        setToken(body.token);
+        navigate("/poll", { replace: true });
+      } catch (err) {
+        if (err.response.data) {
+          errors.password = err.response.data.error;
+        }
+        setFormState((prevState) => ({
+          ...prevState,
+          errors: errors,
+        }));
+      }
     }
   };
 
@@ -88,13 +77,9 @@ const Login = () => {
     const target = event.target;
     const value = target.value;
     const name = target.name;
-  
-    console.log("event",event)
-    // Make a copy of the current formData
+
     const updatedFormData = { ...formState.formData };
     updatedFormData[name] = value;
-  
-    // Update the formState with the updated formData
     setFormState((prevState) => ({
       ...prevState,
       formData: updatedFormData,

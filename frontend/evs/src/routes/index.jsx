@@ -2,6 +2,7 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import { useAuth } from "../provider/authProvider";
 import { ProtectedRoute } from "./ProtectedRoute";
 import Login from "../components/login/Login";
+import Poll from "../components/poll/Poll";
 
 // https://dev.to/sanjayttg/jwt-authentication-in-react-with-react-router-1d03
 const Routes = () => {
@@ -17,6 +18,10 @@ const Routes = () => {
       path: "/about-us",
       element: <div>About Us</div>,
     },
+    {
+      path: "/login",
+      element: <Login/>,
+    },
   ];
 
   // Define routes accessible only to authenticated users
@@ -31,7 +36,7 @@ const Routes = () => {
         },
         {
           path: "/poll",
-          element: <div>Poll Page</div>,
+          element: <Poll />,
         },
         {
             path: "/admin",

@@ -50,9 +50,9 @@ func (s *ApiServer) Run() {
 	s.registerPollRoutes(router)
 
 	c := cors.New(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:3000"},
+		AllowedOrigins:   []string{"*"},
 		AllowCredentials: true,
-		AllowedHeaders: []string{"Accept", "Content-Type", "X-Authorization", "Referer"},
+		AllowedHeaders:   []string{"Accept", "Content-Type", "X-Authorization", "Referer"},
 	})
 
 	handler := c.Handler(router)
