@@ -4,6 +4,7 @@ import { ProtectedRoute } from "./ProtectedRoute";
 import Login from "../components/login/Login";
 import Poll from "../components/poll/Poll";
 import Register from "../components/register/Register";
+import Dashboard from "../components/dashboard/Dashboard";
 
 // https://dev.to/sanjayttg/jwt-authentication-in-react-with-react-router-1d03
 const Routes = () => {
@@ -33,7 +34,7 @@ const Routes = () => {
       children: [
         {
           path: "/",
-          element: <div>User Home Page</div>,
+          element: <Dashboard />,
         },
         {
           path: "/poll",
