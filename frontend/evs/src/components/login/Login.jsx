@@ -16,7 +16,7 @@ const Login = () => {
 
   const [formState, setFormState] = useState({
     formData: { email: '', password: "" },
-    errors: { email: "", password: "" }
+    errors: { email: '', password: '' }
   });
 
   const validateLoginForm = () => {
@@ -146,6 +146,9 @@ const Login = () => {
             >
               Login
             </button>
+          </div>
+          <div className="text-center">
+            Don't have an account? Please <a href="/register">signup</a>
           </div>
         </form>
       </div>

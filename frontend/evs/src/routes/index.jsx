@@ -3,6 +3,7 @@ import { useAuth } from "../provider/authProvider";
 import { ProtectedRoute } from "./ProtectedRoute";
 import Login from "../components/login/Login";
 import Poll from "../components/poll/Poll";
+import Register from "../components/register/Register";
 
 // https://dev.to/sanjayttg/jwt-authentication-in-react-with-react-router-1d03
 const Routes = () => {
@@ -11,8 +12,8 @@ const Routes = () => {
   // Define public routes accessible to all users
   const routesForPublic = [
     {
-      path: "/service",
-      element: <div>Service Page</div>,
+      path: "/register",
+      element: <Register />,
     },
     {
       path: "/about-us",
