@@ -6,6 +6,7 @@ import Poll from "../components/poll/Poll";
 import Register from "../components/register/Register";
 import Dashboard from "../components/dashboard/Dashboard";
 import Logout from "../components/logout/Logout";
+import AddPoll from "../components/poll/AddPoll";
 
 // https://dev.to/sanjayttg/jwt-authentication-in-react-with-react-router-1d03
 const Routes = () => {
@@ -23,7 +24,7 @@ const Routes = () => {
     },
     {
       path: "/login",
-      element: <Login/>,
+      element: <Login />,
     },
   ];
 
@@ -42,9 +43,13 @@ const Routes = () => {
           element: <Poll />,
         },
         {
-            path: "/admin",
-            element: <div>Admin Page</div>,
-          },
+          path: "/poll/add",
+          element: <AddPoll />,
+        },
+        {
+          path: "/admin",
+          element: <div>Admin Page</div>,
+        },
         {
           path: "/logout",
           element: <Logout />,
@@ -57,7 +62,7 @@ const Routes = () => {
   const routesForNotAuthenticatedOnly = [
     {
       path: "/login",
-      element: <Login/>,
+      element: <Login />,
     },
   ];
 

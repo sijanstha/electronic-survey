@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { axiosInstance } from "../../axiosConfig";
+import Sidebar from "../fragment/Sidebar";
+import Navbar from "../fragment/Navbar";
 
 
 const Poll = () => {
@@ -107,6 +109,7 @@ const Poll = () => {
         const target = e.target;
         const updatedFilter = { ...pollListFilter };
         updatedFilter.states = [target.value];
+        updatedFilter.page = 1;
         setPostListFilter(updatedFilter);
     }
 
@@ -118,51 +121,8 @@ const Poll = () => {
     return (
         <React.Fragment>
             <div id="viewport">
-                <div id="sidebar">
-                    <header>
-                        <a href="/">Electronic Voting System</a>
-                    </header>
-                    <ul className="nav">
-                        <li>
-                            <a href="/">
-                                <i className="zmdi zmdi-view-dashboard"></i> Dashboard
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/admin/organizers">
-                                <i className="zmdi zmdi-link"></i> Manage Organizers
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/poll">
-                                <i className="zmdi zmdi-calendar"></i> Manage Polls
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-                <nav className="navbar navbar-expand-lg bg-body-tertiary mb-5 p-2" style={{ "boxShadow": "rgba(0, 0, 0, 0.1) 0px 4px 12px" }}>
-                    <div className="container-fluid">
-                        <img className="navbar-brand" src="/logo.png" width="50px" alt="" />
-                        <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                            <span className="navbar-toggler-icon"></span>
-                        </button>
-                        <div className="collapse navbar-collapse" id="navbarSupportedContent">
-                            <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-
-                            </ul>
-                            <div className="d-flex list-style-none" style={{ "listStyle": "none" }}>
-                                <li className="nav-item dropdown">
-                                    <a className="nav-link dropdown-toggle" href="" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        Email
-                                    </a>
-                                    <ul className="dropdown-menu">
-                                        <li><a className="dropdown-item" href="/logout">Logout</a></li>
-                                    </ul>
-                                </li>
-                            </div>
-                        </div>
-                    </div>
-                </nav>
+                <Sidebar />
+                <Navbar />
                 <div className="container">
                     <div id="content">
                         <div className="container-fluid">
@@ -172,6 +132,7 @@ const Poll = () => {
                                     <a className="btn btn-dark" href="/poll/add">Add Poll</a>
                                 </div>
                             </div>
+                            <hr/>
                             <div className="d-flex justify-content-between">
                                 <div>
                                     <label>Sort By:</label>
@@ -204,7 +165,7 @@ const Poll = () => {
                                     </select>
                                 </div>
                             </div>
-
+                            <hr/>
                             <table className="table">
                                 <thead>
                                     <tr>
