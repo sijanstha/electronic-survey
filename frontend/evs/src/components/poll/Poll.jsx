@@ -3,34 +3,117 @@ import { axiosInstance } from "../../axiosConfig";
 
 
 const Poll = () => {
+
+    const validPollStates = ['PREPARED', 'STARTED', 'VOTING', 'FINISHED']
+
     const [apiResponse, setApiResponse] = useState({
         pageSize: 0,
         page: 0,
         totalRecords: 0,
+        totalPages: 0,
         data: []
     });
     const [pollListFilter, setPostListFilter] = useState({
         sort: 'desc',
         sortBy: 'updated_at',
-        limit: 2,
+        limit: 5,
         page: 1,
         showOwnPoll: true,
+        states: validPollStates
     });
+
+    // TODO: make an api call to list down valid sorting fields for poll
+    const validPollSortFields = [
+        {
+            title:'Updated At',
+            sortBy: 'updated_at',
+            isDefaultSort: true
+        },
+        {
+            title:'Created At',
+            sortBy: 'created_at',
+            isDefaultSort: false
+        },
+        {
+            title:'Id',
+            sortBy: 'id',
+            isDefaultSort: false
+        },
+        {
+            title:'State',
+            sortBy: 'state',
+            isDefaultSort: false
+        },
+        {
+            title:'Title',
+            sortBy: 'title',
+            isDefaultSort: false
+        }
+    ]
+    const validSortDirection = [
+        {
+            title:'ASC',
+            sort:'asc',
+            isDefaultSort: false
+        },
+        {
+            title:'DESC',
+            sort:'desc',
+            isDefaultSort: true
+        }
+    ]
 
     const getPolls = async () => {
         try {
-            const response = await axiosInstance.get(`/poll?showOwnPoll=${pollListFilter.showOwnPoll}&sort=${pollListFilter.sort}&sortBy=${pollListFilter.sortBy}&limit=${pollListFilter.limit}&page=${pollListFilter.page}`);
+            let state = "("
+            state += pollListFilter.states.join(",").concat(")")
+            const response = await axiosInstance.get(`/poll?showOwnPoll=${pollListFilter.showOwnPoll}&sort=${pollListFilter.sort}&sortBy=${pollListFilter.sortBy}&limit=${pollListFilter.limit}&page=${pollListFilter.page}&state=${state}`);
             const { data } = response;
             return data;
         } catch (err) {
-            console.log(err)
+            console.log(err);
         }
     };
+
+    const handlePagination = (e) => {
+        e.preventDefault();
+        const target = e.target;
+        const page = parseInt(target.getAttribute('page'));
+
+        const updatedFilter = { ...pollListFilter };
+        updatedFilter.page = page;
+        setPostListFilter(updatedFilter);
+    }
+
+    const handlePollSortFieldChange = (e) => {
+        e.preventDefault();
+        const target = e.target;
+        const updatedFilter = { ...pollListFilter };
+        updatedFilter.sortBy = target.value;
+        setPostListFilter(updatedFilter);
+    }
+
+    const handlePollSortDirectionChange = (e) => {
+        e.preventDefault();
+        const target = e.target;
+        const updatedFilter = { ...pollListFilter };
+        updatedFilter.sort = target.value;
+        setPostListFilter(updatedFilter);
+    }
+
+    // TODO: make this to select multiple elements
+    const handlePollStateChange = (e) => {
+        e.preventDefault();
+        const target = e.target;
+        const updatedFilter = { ...pollListFilter };
+        updatedFilter.states = [target.value];
+        setPostListFilter(updatedFilter);
+    }
 
     useEffect(() => {
         getPolls().then(
             result => setApiResponse(result));
-    }, []);
+    }, [pollListFilter]);
 
     return (
         <React.Fragment>
@@ -39,58 +122,90 @@ const Poll = () => {
                     <header>
                         <a href="/">Electronic Voting System</a>
                     </header>
-                    <ul class="nav">
+                    <ul className="nav">
                         <li>
                             <a href="/">
-                                <i class="zmdi zmdi-view-dashboard"></i> Dashboard
+                                <i className="zmdi zmdi-view-dashboard"></i> Dashboard
                             </a>
                         </li>
                         <li>
                             <a href="/admin/organizers">
-                                <i class="zmdi zmdi-link"></i> Manage Organizers
+                                <i className="zmdi zmdi-link"></i> Manage Organizers
                             </a>
                         </li>
                         <li>
                             <a href="/poll">
-                                <i class="zmdi zmdi-calendar"></i> Manage Polls
+                                <i className="zmdi zmdi-calendar"></i> Manage Polls
                             </a>
                         </li>
                     </ul>
                 </div>
-                <nav class="navbar navbar-expand-lg bg-body-tertiary mb-5 p-2" style={{ "box-shadow": "rgba(0, 0, 0, 0.1) 0px 4px 12px;" }}>
-                    <div class="container-fluid">
-                        <img class="navbar-brand" src="/logo.png" width="50px" alt="" />
-                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                            <span class="navbar-toggler-icon"></span>
+                <nav className="navbar navbar-expand-lg bg-body-tertiary mb-5 p-2" style={{ "boxShadow": "rgba(0, 0, 0, 0.1) 0px 4px 12px" }}>
+                    <div className="container-fluid">
+                        <img className="navbar-brand" src="/logo.png" width="50px" alt="" />
+                        <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                            <span className="navbar-toggler-icon"></span>
                         </button>
-                        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <div className="collapse navbar-collapse" id="navbarSupportedContent">
+                            <ul className="navbar-nav me-auto mb-2 mb-lg-0">
 
                             </ul>
-                            <div class="d-flex list-style-none" style={{ "list-style": "none" }}>
-                                <li class="nav-item dropdown">
-                                    <a class="nav-link dropdown-toggle" href="" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <div className="d-flex list-style-none" style={{ "listStyle": "none" }}>
+                                <li className="nav-item dropdown">
+                                    <a className="nav-link dropdown-toggle" href="" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                         Email
                                     </a>
-                                    <ul class="dropdown-menu">
-                                        <li><a class="dropdown-item" href="/logout">Logout</a></li>
+                                    <ul className="dropdown-menu">
+                                        <li><a className="dropdown-item" href="/logout">Logout</a></li>
                                     </ul>
                                 </li>
                             </div>
                         </div>
                     </div>
                 </nav>
-                <div class="container">
+                <div className="container">
                     <div id="content">
-                        <div class="container-fluid">
-                            <div class="d-flex justify-content-between">
+                        <div className="container-fluid">
+                            <div className="d-flex justify-content-between">
                                 <h4>Polls</h4>
                                 <div>
-                                    <a class="btn btn-dark" href="/poll/add">Add Poll</a>
+                                    <a className="btn btn-dark" href="/poll/add">Add Poll</a>
+                                </div>
+                            </div>
+                            <div className="d-flex justify-content-between">
+                                <div>
+                                    <label>Sort By:</label>
+                                    <select className="form-select form-select-sm" aria-label="Sort by" onChange={handlePollSortFieldChange}>
+                                        {
+                                            validPollSortFields.length > 0 && (
+                                                validPollSortFields.map(field => <option key={field.sortBy} selected={field.isDefaultSort} value={field.sortBy}>{field.title}</option>)
+                                            )
+                                        }
+                                    </select>
+                                </div>
+                                <div>
+                                    <label>Sort Direction:</label>
+                                    <select className="form-select form-select-sm" aria-label="Sort direction" onChange={handlePollSortDirectionChange}>
+                                        {
+                                            validSortDirection.length > 0 && (
+                                                validSortDirection.map(field => <option key={field.sort} selected={field.isDefaultSort} value={field.sort}>{field.title}</option>)
+                                            )
+                                        }
+                                    </select>
+                                </div>
+                                <div>
+                                    <label>Filter by Poll state:</label>
+                                    <select className="form-select form-select-sm" aria-label="Sort direction" onChange={handlePollStateChange}>
+                                        {
+                                            validPollStates.length > 0 && (
+                                                validPollStates.map(field => <option key={field}  value={field}>{field}</option>)
+                                            )
+                                        }
+                                    </select>
                                 </div>
                             </div>
 
-                            <table class="table">
+                            <table className="table">
                                 <thead>
                                     <tr>
                                         <th scope="col">#</th>
@@ -114,13 +229,16 @@ const Poll = () => {
                                                 <td>{poll.endsAt}</td>
                                                 <td>{poll.state}</td>
                                                 <td>{poll.primaryOrganizerName}</td>
-                                                <td class="d-flex">
-                                                    <div class="d-flex justify-content-center align-items-center gap-2">
+                                                <td className="d-flex">
+                                                    <div className="d-flex justify-content-center align-items-center gap-2">
                                                         <div>
-                                                            <a href="#"><i class="fa fa-trash"></i></a>
+                                                            <a href="#" title="Start Poll"><i className="fa fa-play"></i></a>
                                                         </div>
                                                         <div>
-                                                        <a href="#"><i class="fa fa-edit"></i></a>
+                                                            <a href="#" title="Edit Poll"><i className="fa fa-edit"></i></a>
+                                                        </div>
+                                                        <div>
+                                                            <a href="#" title="Delete Poll"><i className="fa fa-trash"></i></a>
                                                         </div>
                                                     </div>
                                                 </td>
@@ -130,6 +248,18 @@ const Poll = () => {
                                     }
                                 </tbody>
                             </table>
+                            <div className="d-flex ml-4">
+                                <nav aria-label="Page navigation example">
+                                    <ul className="pagination">
+                                        {apiResponse.data && ([...Array(apiResponse.totalPages)].map((x, i) =>
+                                            <li className="page-item" key={i}>
+                                                <a className="page-link" page={i + 1} href="#" onClick={handlePagination}>{i + 1}</a>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </nav>
+
+                            </div>
                         </div>
                     </div>
                 </div>
