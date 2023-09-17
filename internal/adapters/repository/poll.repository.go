@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"math"
 	"strings"
 	"time"
 
@@ -234,7 +235,9 @@ func (r *pollMysqlRepository) FindAllPoll(filter domain.PollListFilter) (*domain
 		)
 		result.Data = append(result.Data, poll)
 	}
-	result.Size = len(result.Data)
+	result.Size = int(filter.Limit)
+	totalPages := int(math.Ceil(float64(result.Total) / float64(result.Size)))
+	result.TotalPages = totalPages
 	return result, nil
 }
 

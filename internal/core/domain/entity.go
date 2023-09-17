@@ -54,6 +54,7 @@ type PaginationDetails struct {
 	Size  int `json:"pageSize"`
 	Page  int `json:"page"`
 	Total int `json:"totalRecords"`
+	TotalPages int `json:"totalPages"`
 }
 
 type PollWithOrganizerInfo struct {

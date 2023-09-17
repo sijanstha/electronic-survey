@@ -52,7 +52,7 @@ func (s *ApiServer) Run() {
 	c := cors.New(cors.Options{
 		AllowedOrigins:   []string{"*"},
 		AllowCredentials: true,
-		AllowedHeaders:   []string{"Accept", "Content-Type", "X-Authorization", "Referer"},
+		AllowedHeaders:   []string{"Accept", "Content-Type", "Authorization", "Referer"},
 	})
 
 	handler := c.Handler(router)
@@ -110,7 +110,7 @@ func makeHTTPHandleFunc(f apiFunc) http.HandlerFunc {
 func authMiddleware(handlerFunc http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		log.Println("inside authentication middleware")
-		token := r.Header.Get("X-Authorization")
+		token := r.Header.Get("Authorization")
 		log.Println("token:", token)
 		claims, err := jwtService.Validate(token)
 
