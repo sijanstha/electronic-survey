@@ -30,8 +30,8 @@ func NewPollMysqlRepository(db *sql.DB) ports.PollRepository {
 }
 
 func (r *pollMysqlRepository) SavePoll(poll *domain.Poll) (*domain.Poll, error) {
-	query := "insert into poll (title, description, starts_at, ends_at, created_at, updated_at) values (?, ?, ?, ?, ?, ?)"
-	res, err := r.db.Exec(query, poll.Title, poll.Description, poll.StartsAt, poll.EndsAt, poll.CreatedAt, poll.UpdatedAt)
+	query := "insert into poll (title, description, starts_at, ends_at, timezone, created_at, updated_at) values (?, ?, ?, ?, ?, ?, ?)"
+	res, err := r.db.Exec(query, poll.Title, poll.Description, poll.StartsAt, poll.EndsAt, poll.Timezone, poll.CreatedAt, poll.UpdatedAt)
 
 	me, ok := err.(*mysql.MySQLError)
 	if !ok && me != nil {
@@ -73,6 +73,11 @@ func (r *pollMysqlRepository) UpdatePoll(poll *domain.Poll) (*domain.Poll, error
 	if poll.State != "" && len(poll.State) > 0 {
 		values += "state=?,"
 		args = append(args, poll.State)
+	}
+
+	if poll.Timezone != "" && len(poll.Timezone) > 0 {
+		values += "timezone=?,"
+		args = append(args, poll.Timezone)
 	}
 
 	if !poll.StartsAt.IsZero() {
@@ -232,6 +237,7 @@ func (r *pollMysqlRepository) FindAllPoll(filter domain.PollListFilter) (*domain
 			&poll.StartsAt,
 			&poll.EndsAt,
 			&poll.State,
+			&poll.Timezone,
 			&poll.CreatedAt,
 			&poll.UpdatedAt,
 			&poll.FullName,
@@ -247,7 +253,7 @@ func (r *pollMysqlRepository) FindAllPoll(filter domain.PollListFilter) (*domain
 
 func (r *pollMysqlRepository) FindAllPollInStartedStateInDateRange(from time.Time, to time.Time) ([]*domain.Poll, error) {
 	query := `select 
-			id, title, state, description, starts_at, ends_at, created_at, updated_at 
+			id, title, state, description, starts_at, ends_at, timezone, created_at, updated_at 
 			from Poll p 
 			where p.state = ? 
 			and p.starts_at >= ? 
@@ -272,7 +278,7 @@ func (r *pollMysqlRepository) FindAllPollInStartedStateInDateRange(from time.Tim
 
 func (r *pollMysqlRepository) FindAllPollInVotingStateInDateRange(from time.Time, to time.Time) ([]*domain.Poll, error) {
 	query := `select 
-			id, title, state, description, starts_at, ends_at, created_at, updated_at 
+			id, title, state, description, starts_at, ends_at, timezone, created_at, updated_at 
 			from Poll p 
 			where p.state = ? 
 			and p.ends_at >= ? 
@@ -304,6 +310,7 @@ func (r *pollMysqlRepository) Init() error {
 			state varchar(50) not null default "PREPARED",
 			starts_at datetime not null,
 			ends_at datetime not null,
+			timezone varchar(100) not null,
 			created_at timestamp not null,
 			updated_at timestamp not null
 		)
@@ -324,6 +331,7 @@ func (r *pollMysqlRepository) scanPollRow(rows *sql.Rows) (*domain.Poll, error) 
 		&poll.Description,
 		&poll.StartsAt,
 		&poll.EndsAt,
+		&poll.Timezone,
 		&poll.CreatedAt,
 		&poll.UpdatedAt,
 	)

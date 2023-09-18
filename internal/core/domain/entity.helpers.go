@@ -6,12 +6,13 @@ import (
 	"github.com/sijanstha/electronic-voting-system/internal/core/utils"
 )
 
-func NewPoll(id int64, title, description string, startsAt, endsAt time.Time, state PollState, forUpdate bool) *Poll {
+func NewPoll(id int64, title, description string, startsAt, endsAt time.Time, tz string, state PollState, forUpdate bool) *Poll {
 	return &Poll{
 		Title:       title,
 		Description: description,
 		StartsAt:    startsAt,
 		EndsAt:      endsAt,
+		Timezone:    tz,
 		State:       state,
 		BaseEntity:  newBaseEntity(id, forUpdate),
 	}

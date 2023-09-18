@@ -25,6 +25,10 @@ func (c *CreatePollRequest) Validate() (*Poll, error) {
 		return nil, commonError.NewErrBadRequest("ends at cannot be empty or null")
 	}
 
+	if c.Timezone == "" {
+		return nil, commonError.NewErrBadRequest("timezone cannot be empty or null")
+	}
+
 	startsAt, err := utils.ParseDateTime(c.StartsAt)
 	if err != nil {
 		return nil, commonError.NewErrBadRequest(err.Error())
@@ -47,7 +51,7 @@ func (c *CreatePollRequest) Validate() (*Poll, error) {
 		return nil, commonError.NewErrBadRequest("end date should be after start date")
 	}
 
-	return NewPoll(0, c.Title, c.Description, startsAt, endsAt, PREPARED, false), nil
+	return NewPoll(0, c.Title, c.Description, startsAt, endsAt, c.Timezone, PREPARED, false), nil
 }
 
 func (c *CreateUserRequest) Validate() (*User, error) {

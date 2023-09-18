@@ -13,6 +13,7 @@ type PollDatabaseView struct {
 	Title          string                      `json:"title"`
 	Description    string                      `json:"description"`
 	State          PollState                   `json:"state"`
+	Timezone       string                      `json:"timezone"`
 	StartsAt       string                      `json:"startsAt"`
 	EndsAt         string                      `json:"endsAt"`
 	Id             int64                       `json:"id"`
@@ -65,6 +66,7 @@ func (p *PollDatabaseView) ToPollInfo() *PollInfo {
 			StartsAt:    utils.FormatDateTime(p.StartsAt),
 			EndsAt:      utils.FormatDateTime(p.EndsAt),
 			State:       p.State,
+			Timezone:    p.Timezone,
 		},
 		PollOrganizers: pollOrganizers,
 	}

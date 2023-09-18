@@ -5,6 +5,7 @@ type CreatePollRequest struct {
 	Description string `json:"description"`
 	StartsAt    string `json:"startsAt"`
 	EndsAt      string `json:"endsAt"`
+	Timezone    string `json:"timezone"`
 }
 
 type UpdatePollRequest struct {
