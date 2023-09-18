@@ -1,6 +1,13 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
+    const navigate=useNavigate()
+
+    const handleLogout = ()=>{
+        localStorage.removeItem('token')
+        navigate('/login')
+    }
     return (
         <React.Fragment>
             <nav className="navbar navbar-expand-lg bg-body-tertiary mb-5 p-2" style={{ "boxShadow": "rgba(0, 0, 0, 0.1) 0px 4px 12px" }}>
@@ -19,7 +26,7 @@ const Navbar = () => {
                                     Email
                                 </a>
                                 <ul className="dropdown-menu">
-                                    <li><a className="dropdown-item" href="/logout">Logout</a></li>
+                                    <li><a className="dropdown-item" onClick={handleLogout}>Logout</a></li>
                                 </ul>
                             </li>
                         </div>
