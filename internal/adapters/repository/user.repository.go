@@ -76,24 +76,3 @@ func (r *userRepository) FindByEmail(email string) (*domain.User, error) {
 
 	return nil, &commonError.ErrNotFound{Message: fmt.Sprintf("%s not found", email)}
 }
-
-func (r *userRepository) Init() error {
-	query := `
-		create table if not exists user (
-			id int not null auto_increment primary key,
-			first_name varchar(50) not null,
-			last_name varchar(50) not null,
-			email varchar(100) not null unique,
-			role varchar(50) not null default "ROLE_ORGANIZER",
-			hash_password varchar(200) not null,
-			created_at timestamp not null,
-			updated_at timestamp not null
-		)
-	`
-	_, err := r.db.Exec(query)
-	if err != nil {
-		return &commonError.ErrInternalServer{Message: err.Error()}
-	}
-
-	return nil
-}

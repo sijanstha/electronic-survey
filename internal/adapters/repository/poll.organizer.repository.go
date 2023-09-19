@@ -39,24 +39,3 @@ func (r *pollOrganizerRepository) SavePollOrganizer(req *domain.PollOrganizer) (
 	req.Id = id
 	return req, nil
 }
-
-func (r *pollOrganizerRepository) Init() error {
-	query := `
-		create table if not exists poll_organizer (
-			id int not null auto_increment primary key,
-			fk_poll_id int not null,
-			fk_organizer_id int not null,
-			primary_organizer bit(1) default 0,
-			created_at timestamp not null,
-			updated_at timestamp not null,
-			foreign key(fk_poll_id) references poll(id),
-			foreign key(fk_organizer_id) references user(id)
-		)
-	`
-	_, err := r.db.Exec(query)
-	if err != nil {
-		return &commonError.ErrInternalServer{Message: err.Error()}
-	}
-
-	return nil
-}

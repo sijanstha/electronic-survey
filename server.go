@@ -37,8 +37,6 @@ func (s *ApiServer) Run() {
 	userRepo := repository.NewUserRepository(s.db)
 	pollOrganizerRepo := repository.NewPollOrganizerRepository(s.db)
 
-	s.initDb(pollRepo, userRepo, pollOrganizerRepo)
-
 	jwtService = services.NewJwtService()
 	pollService = services.NewPollService(pollRepo, pollOrganizerRepo)
 	userService = services.NewUserService(userRepo)
@@ -71,15 +69,6 @@ func (s *ApiServer) registerPublicRoutes(router *mux.Router) {
 	authHandler := handler.NewAuthenticationHandler(userService, authService)
 	router.HandleFunc("/login", makeHTTPHandleFunc(authHandler.HandleUserAuthentication)).Methods("POST")
 	router.HandleFunc("/register", makeHTTPHandleFunc(authHandler.HandleRegisterUser)).Methods("POST")
-}
-
-func (s *ApiServer) initDb(repos ...ports.BaseRepository) {
-	for _, repo := range repos {
-		err := repo.Init()
-		if err != nil {
-			log.Fatal(err)
-		}
-	}
 }
 
 type apiFunc func(http.ResponseWriter, *http.Request) error
