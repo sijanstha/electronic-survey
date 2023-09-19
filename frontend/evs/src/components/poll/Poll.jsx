@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { axiosInstance } from "../../axiosConfig";
 import Sidebar from "../fragment/Sidebar";
 import Navbar from "../fragment/Navbar";
+import { DateTime } from "luxon";
 
 const Poll = () => {
     const validPollStates = [
@@ -236,6 +237,7 @@ const Poll = () => {
                                         <th scope="col">Description</th>
                                         <th scope="col">Starts At</th>
                                         <th scope="col">Ends At</th>
+                                        <th scope="col">Timezone</th>
                                         <th scope="col">State</th>
                                         <th scope="col">Primary Organizer</th>
                                         <th scope="col">Action</th>
@@ -248,8 +250,9 @@ const Poll = () => {
                                                 <th scope="row">{idx + 1}</th>
                                                 <td>{poll.title}</td>
                                                 <td>{poll.description}</td>
-                                                <td>{poll.startsAt}</td>
-                                                <td>{poll.endsAt}</td>
+                                                <td>{DateTime.fromISO(poll.startsAt).setZone(poll.timezone).toFormat('EEE, MMM yyyy hh:mm a')}</td>
+                                                <td>{DateTime.fromISO(poll.endsAt).setZone(poll.timezone).toFormat('EEE, MMM yyyy hh:mm a')}</td>
+                                                <td>{poll.timezone}</td>
                                                 <td>{poll.state}</td>
                                                 <td>{poll.primaryOrganizerName}</td>
                                                 <td className="d-flex">

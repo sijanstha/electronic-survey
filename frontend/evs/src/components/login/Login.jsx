@@ -60,7 +60,7 @@ const Login = () => {
         });
         const { body } = resp.data;
         setToken(body.token);
-        navigate("/poll", { replace: true });
+        navigate("/", { replace: true });
       } catch (err) {
         if (err.response.data) {
           errors.password = err.response.data.error;

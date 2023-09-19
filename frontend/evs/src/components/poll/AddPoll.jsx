@@ -2,15 +2,14 @@ import React, { useState } from "react";
 import Sidebar from "../fragment/Sidebar";
 import Navbar from "../fragment/Navbar";
 import { isEmpty } from "../../shared/validator";
-import { isBefore, isEqual, parseISO } from "date-fns";
 import { axiosInstance } from "../../axiosConfig";
 import { useNavigate } from "react-router-dom";
-import { format, utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz'
+import {DateTime} from "luxon";
 
 const AddPoll = () => {
     const navigate = useNavigate();
     const [formState, setFormState] = useState({
-        formData: { title: '', description: '', startsAt: '', endsAt: '', timezone: '' },
+        formData: { title: '', description: '', strStartsAt: '', strEndsAt: '', timezone: '', startsAt:'', endsAt:'' },
         errors: { title: '', startsAt: '', endsAt: '', timezone: '' }
     });
 
@@ -22,11 +21,11 @@ const AddPoll = () => {
             errors.title = "Title can't be blank";
         }
 
-        if (isEmpty(formData.startsAt)) {
+        if (isEmpty(formData.strStartsAt)) {
             errors.startsAt = "Start date can't be blank";
         }
 
-        if (isEmpty(formData.endsAt)) {
+        if (isEmpty(formData.strEndsAt)) {
             errors.endsAt = "End date can't be blank";
         }
 
@@ -34,33 +33,24 @@ const AddPoll = () => {
             errors.timezone = "Timezone can't be blank";
         }
 
-        let startsAt = new Date(formData.startsAt);
-        let endsAt = new Date(formData.endsAt);
+        const startsAt = DateTime.fromISO(formData.strStartsAt, {zone: formData.timezone}).toUTC();
+        const endsAt = DateTime.fromISO(formData.strEndsAt, {zone: formData.timezone}).toUTC();
+        const today = DateTime.local().toUTC();
 
-        const defaultTodayDate = new Date();
-        const dateInSelectedTz = zonedTimeToUtc(defaultTodayDate, formData.timezone);
-        console.log(`
-                Default time zone: ${format(defaultTodayDate, 'yyyy-MM-dd HH:mm:ss')}
-                Time in Paris: ${format(dateInSelectedTz, 'yyyy-MM-dd HH:mm:ss')
-            }`);
-
-        const ff = zonedTimeToUtc(startsAt, formData.timezone)
-        console.log(`
-                Default startsAt: ${startsAt}
-                ff: ${format(ff, 'yyyy-MM-dd HH:mm:ss')
-            }`);
-
-        if (isBefore(startsAt, new Date()) || isEqual(new Date(), startsAt)) {
+        if (startsAt.diff(today) <= 0) {
             errors.startsAt = "Start date can't be of past date";
         }
 
-        if (isBefore(endsAt, new Date()) || isEqual(new Date(), endsAt)) {
+        if (endsAt.diff(today) <= 0) {
             errors.endsAt = "End date can't be of past date";
         }
 
-        if (isBefore(endsAt, startsAt) || isEqual(endsAt, startsAt)) {
+        if (endsAt.diff(startsAt) <= 0) {
             errors.endsAt = "End date should be after start date";
         }
+
+        formData.startsAt = startsAt.toISO();
+        formData.endsAt = endsAt.toISO();
 
         setFormState((prevState) => ({
             ...prevState,
@@ -76,9 +66,6 @@ const AddPoll = () => {
         let errors = validateAddPollForm();
         if (isEmpty(errors)) {
             const { formData } = formState;
-            // TODO: convert date into UTC using format yyyy-dd-MMThh:mm:ss and set it into formstate
-            formData.startsAt = formData.startsAt.concat(':00');
-            formData.endsAt = formData.endsAt.concat(':00');
             try {
                 await axiosInstance.post("/poll", {
                     ...formData
@@ -168,9 +155,9 @@ const AddPoll = () => {
                                     <input
                                         className="form-control w-50"
                                         type="datetime-local"
-                                        id="startsAt"
-                                        name="startsAt"
-                                        value={formState.formData?.startsAt}
+                                        id="strStartsAt"
+                                        name="strStartsAt"
+                                        value={formState.formData?.strStartsAt}
                                         onChange={handleInputChange}
                                     />
                                     {formState.errors.startsAt && (
@@ -191,9 +178,9 @@ const AddPoll = () => {
                                     <input
                                         className="form-control w-50"
                                         type="datetime-local"
-                                        id="endsAt"
-                                        name="endsAt"
-                                        value={formState.formData?.endsAt}
+                                        id="strEndsAt"
+                                        name="strEndsAt"
+                                        value={formState.formData?.strEndsAt}
                                         onChange={handleInputChange}
                                     />
                                     {formState.errors.endsAt && (
