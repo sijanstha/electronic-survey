@@ -1,12 +1,14 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../provider/authProvider";
 
 const Navbar = () => {
-    const navigate=useNavigate()
+    const navigate = useNavigate();
+    const { setToken } = useAuth();
 
-    const handleLogout = ()=>{
-        localStorage.removeItem('token')
-        navigate('/login')
+    const handleLogout = () => {
+        setToken();
+        navigate('/login');
     }
     return (
         <React.Fragment>
@@ -22,6 +24,7 @@ const Navbar = () => {
                         </ul>
                         <div className="d-flex list-style-none" style={{ "listStyle": "none" }}>
                             <li className="nav-item dropdown">
+                                {/* TODO: parse JWT token to get logged in user information on navigation bar */}
                                 <a className="nav-link dropdown-toggle" href="" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     Email
                                 </a>
