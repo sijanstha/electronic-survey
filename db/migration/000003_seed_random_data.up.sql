@@ -1,3 +1,4 @@
+#default password: password
 insert into user(first_name, last_name, email, hash_password, created_at, updated_at)
 values ('Test', 'User', 'test@evs.com', '$2a$10$28cm0tPse3.cFS1TmV..NOtpI1FeFyUXqwbm1NxukmlFvNhRHE/Qi', now(), now()),
        ('Bob', 'Marley', 'bob@evs.com', '$2a$10$28cm0tPse3.cFS1TmV..NOtpI1FeFyUXqwbm1NxukmlFvNhRHE/Qi', now(), now()),
