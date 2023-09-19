@@ -11,13 +11,16 @@ uiinstall:
 	@yarn --cwd ./frontend/evs install
 
 uiadd:
-	yarn --cwd ./frontend/evs add $(package)
+	@yarn --cwd ./frontend/evs add $(package)
 
 run: build
 	@./bin/evs
 
 test:
 	@go test -v ./backend/...
+
+create-migration:
+	@migrate create -ext sql -dir db/migration -seq $(name)
 
 container-ls:
 	@docker container ls

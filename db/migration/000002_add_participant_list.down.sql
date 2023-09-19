@@ -1,0 +1,1 @@
+drop table if exists participant_list;
