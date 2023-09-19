@@ -263,7 +263,7 @@ const Poll = () => {
                                                             </a>
                                                         </div>
                                                         <div>
-                                                            <a href="#" title="Edit Poll">
+                                                            <a href={`/poll/edit/${poll.id}`} title="Edit Poll">
                                                                 <i className="fa fa-edit"></i>
                                                             </a>
                                                         </div>
