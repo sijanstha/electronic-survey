@@ -11,3 +11,12 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+
+.filter-dropdown{
+  padding: 10px;
+  position: absolute;
+  background: white;
+  z-index: 99999;
+  right: 0
+}

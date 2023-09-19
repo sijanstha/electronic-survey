@@ -42,6 +42,10 @@ func (r *pollMysqlRepository) SavePoll(poll *domain.Poll) (*domain.Poll, error) 
 		return nil, &commonError.ErrUniqueConstraintViolation{Message: fmt.Sprintf("poll with title %s already exists", poll.Title)}
 	}
 
+	if err != nil {
+		return nil, &commonError.ErrInternalServer{Message: err.Error()}
+	}
+
 	id, err := res.LastInsertId()
 	if err != nil {
 		return nil, &commonError.ErrInternalServer{Message: err.Error()}
