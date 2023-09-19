@@ -1,11 +1,20 @@
 import AuthProvider from "./provider/authProvider";
 import Routes from "./routes";
+import { positions, Provider } from "react-alert";
+import AlertTemplate from "react-alert-template-basic";
 
-function App() {
+const options = {
+  timeout: 3000,
+  position: positions.BOTTOM_CENTER
+};
+
+const App = () => {
   return (
-    <AuthProvider>
-      <Routes />
-    </AuthProvider>
+    <Provider template={AlertTemplate} {...options}>
+      <AuthProvider>
+        <Routes />
+      </AuthProvider>
+    </Provider>
   );
 }
 

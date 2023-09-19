@@ -51,6 +51,7 @@ func (s *ApiServer) Run() {
 		AllowedOrigins:   []string{"*"},
 		AllowCredentials: true,
 		AllowedHeaders:   []string{"Accept", "Content-Type", "Authorization", "Referer"},
+		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE"},
 	})
 
 	handler := c.Handler(router)

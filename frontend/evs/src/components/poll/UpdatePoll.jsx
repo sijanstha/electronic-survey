@@ -5,21 +5,26 @@ import { isEmpty } from "../../shared/validator";
 import { axiosInstance } from "../../axiosConfig";
 import { useNavigate, useParams } from "react-router-dom";
 import { DateTime } from "luxon";
+import { useAlert } from "react-alert";
 
 const UpdatePoll = () => {
     const navigate = useNavigate();
     const routeParams = useParams();
+    const alert = useAlert();
+
     const [formState, setFormState] = useState({
         formData: { title: '', description: '', strStartsAt: '', strEndsAt: '', timezone: '', startsAt: '', endsAt: '', id: '' },
         errors: { title: '', startsAt: '', endsAt: '', timezone: '' }
     });
 
     useEffect(() => {
-        const pollId = parseInt(routeParams.id);
-        if (pollId === undefined) {
+        if(isNaN(routeParams.id)) {
+            alert.error(`Invalid poll id ${routeParams.id}`)
             navigate('/poll')
+            return;
         }
 
+        const pollId = parseInt(routeParams.id);
         axiosInstance.get(`/poll/${pollId}`)
             .then(resp => {
                 const { body } = resp.data;
@@ -41,7 +46,7 @@ const UpdatePoll = () => {
 
             })
             .catch(err => {
-                // TODO: alert using swal that poll not found to user
+                alert.error(`Poll with id ${pollId} not found`);
                 navigate('/poll');
             });
     }, [])
@@ -105,6 +110,7 @@ const UpdatePoll = () => {
                 await axiosInstance.put("/poll", {
                     ...formData
                 });
+                alert.success("Poll updated successfully");
                 navigate("/poll", { replace: true });
             } catch (err) {
                 console.log('errss', err)

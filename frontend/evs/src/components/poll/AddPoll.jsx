@@ -5,9 +5,12 @@ import { isEmpty } from "../../shared/validator";
 import { axiosInstance } from "../../axiosConfig";
 import { useNavigate } from "react-router-dom";
 import {DateTime} from "luxon";
+import { useAlert } from "react-alert";
 
 const AddPoll = () => {
     const navigate = useNavigate();
+    const alert = useAlert();
+
     const [formState, setFormState] = useState({
         formData: { title: '', description: '', strStartsAt: '', strEndsAt: '', timezone: '', startsAt:'', endsAt:'' },
         errors: { title: '', startsAt: '', endsAt: '', timezone: '' }
@@ -70,6 +73,7 @@ const AddPoll = () => {
                 await axiosInstance.post("/poll", {
                     ...formData
                 });
+                alert.success("Poll added successfully");
                 navigate("/poll", { replace: true });
             } catch (err) {
                 console.log('errss', err)
