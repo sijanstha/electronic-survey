@@ -8,7 +8,7 @@ const Poll = () => {
         { isChecked: true, value: "PREPARED" },
         { isChecked: true, value: "STARTED" },
         { isChecked: true, value: "VOTING" },
-        { isChecked: true, value: "Finished" },
+        { isChecked: true, value: "FINISHED" },
     ];
 
     const [pollListFilter, setPostListFilter] = useState({
@@ -34,39 +34,39 @@ const Poll = () => {
     const validPollSortFields = [
         {
             title: "Updated At",
-            sortBy: "updated_at",
+            value: "updated_at",
             isDefaultSort: true,
         },
         {
             title: "Created At",
-            sortBy: "created_at",
+            value: "created_at",
             isDefaultSort: false,
         },
         {
             title: "Id",
-            sortBy: "id",
+            value: "id",
             isDefaultSort: false,
         },
         {
             title: "State",
-            sortBy: "state",
+            value: "state",
             isDefaultSort: false,
         },
         {
             title: "Title",
-            sortBy: "title",
+            value: "title",
             isDefaultSort: false,
         },
     ];
     const validSortDirection = [
         {
             title: "ASC",
-            sort: "asc",
+            value: "asc",
             isDefaultSort: false,
         },
         {
             title: "DESC",
-            sort: "desc",
+            value: "desc",
             isDefaultSort: true,
         },
     ];
@@ -74,7 +74,7 @@ const Poll = () => {
     const getPolls = async () => {
         try {
             let state = "(";
-            state += pollListFilter.states.join(",").concat(")");
+            state += pollListFilter.states.filter(state => state.isChecked).map(state => state.value).join(",").concat(")");
             const response = await axiosInstance.get(
                 `/poll?showOwnPoll=${pollListFilter.showOwnPoll}&sort=${pollListFilter.sort}&sortBy=${pollListFilter.sortBy}&limit=${pollListFilter.limit}&page=${pollListFilter.page}&state=${state}`
             );
@@ -111,15 +111,13 @@ const Poll = () => {
         setPostListFilter(updatedFilter);
     };
 
-    // TODO: make this to select multiple elements
     let pollValueArray = [];
     const handlePollStateChange = (e, i) => {
-        const updatedStates = [...pollListFilter.states]; // Create a copy of the states array
+        const updatedStates = [...pollListFilter.states];
 
         if (e.target.checked) {
             pollValueArray.push(e.target.value);
 
-            // Update the isChecked property in the copied array
             updatedStates[i] = {
                 ...updatedStates[i],
                 isChecked: true,
@@ -131,27 +129,21 @@ const Poll = () => {
             );
             pollValueArray.splice(index, 1);
 
-            // Update the isChecked property in the copied array
             updatedStates[i] = {
                 ...updatedStates[i],
                 isChecked: false,
             };
         }
 
-        // Update the states property in the pollListFilter state
         setPostListFilter((prevState) => ({
             ...prevState,
             states: updatedStates,
         }));
-
-        console.log(updatedStates, "updatedStates");
     };
 
-    console.log("pollstate", pollListFilter?.states);
-
     useEffect(() => {
-        // getPolls().then(
-        //     result => setApiResponse(result));
+        getPolls().then(
+            result => setApiResponse(result));
     }, [pollListFilter]);
 
     return (
@@ -183,9 +175,9 @@ const Poll = () => {
                                         {validPollSortFields.length > 0 &&
                                             validPollSortFields.map((field) => (
                                                 <option
-                                                    key={field.sortBy}
+                                                    key={field.value}
                                                     selected={field.isDefaultSort}
-                                                    value={field.sortBy}
+                                                    value={field.value}
                                                 >
                                                     {field.title}
                                                 </option>
@@ -202,9 +194,9 @@ const Poll = () => {
                                         {validSortDirection.length > 0 &&
                                             validSortDirection.map((field) => (
                                                 <option
-                                                    key={field.sort}
+                                                    key={field.value}
                                                     selected={field.isDefaultSort}
-                                                    value={field.sort}
+                                                    value={field.value}
                                                 >
                                                     {field.title}
                                                 </option>
