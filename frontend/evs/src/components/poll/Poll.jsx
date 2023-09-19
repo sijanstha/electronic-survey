@@ -242,7 +242,7 @@ const Poll = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {apiResponse.data &&
+                                    {apiResponse?.data && (
                                         apiResponse.data.map((poll, idx) => (
                                             <tr key={poll.id}>
                                                 <th scope="row">{idx + 1}</th>
@@ -272,25 +272,17 @@ const Poll = () => {
                                                     </div>
                                                 </td>
                                             </tr>
-                                        ))}
+                                        )))}
                                 </tbody>
                             </table>
                             <div className="d-flex ml-4">
                                 <nav aria-label="Page navigation example">
                                     <ul className="pagination">
-                                        {apiResponse.data &&
-                                            [...Array(apiResponse.totalPages)].map((x, i) => (
-                                                <li className="page-item" key={i}>
-                                                    <a
-                                                        className="page-link"
-                                                        page={i + 1}
-                                                        href="#"
-                                                        onClick={handlePagination}
-                                                    >
-                                                        {i + 1}
-                                                    </a>
-                                                </li>
-                                            ))}
+                                        {apiResponse?.data && ([...Array(apiResponse.totalPages)].map((x, i) =>
+                                            <li className="page-item" key={i}>
+                                                <a className="page-link" page={i + 1} href="#" onClick={handlePagination}>{i + 1}</a>
+                                            </li>
+                                        ))}
                                     </ul>
                                 </nav>
                             </div>

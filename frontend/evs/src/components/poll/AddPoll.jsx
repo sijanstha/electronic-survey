@@ -2,15 +2,16 @@ import React, { useState } from "react";
 import Sidebar from "../fragment/Sidebar";
 import Navbar from "../fragment/Navbar";
 import { isEmpty } from "../../shared/validator";
-import { isBefore, isEqual } from "date-fns";
+import { isBefore, isEqual, parseISO } from "date-fns";
 import { axiosInstance } from "../../axiosConfig";
 import { useNavigate } from "react-router-dom";
+import { format, utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz'
 
 const AddPoll = () => {
     const navigate = useNavigate();
     const [formState, setFormState] = useState({
-        formData: { title: '', description: '', startsAt: '', endsAt: '' },
-        errors: { title: '', startsAt: '', endsAt: '' }
+        formData: { title: '', description: '', startsAt: '', endsAt: '', timezone: '' },
+        errors: { title: '', startsAt: '', endsAt: '', timezone: '' }
     });
 
     const validateAddPollForm = () => {
@@ -29,8 +30,25 @@ const AddPoll = () => {
             errors.endsAt = "End date can't be blank";
         }
 
+        if (isEmpty(formData.timezone)) {
+            errors.timezone = "Timezone can't be blank";
+        }
+
         let startsAt = new Date(formData.startsAt);
         let endsAt = new Date(formData.endsAt);
+
+        const defaultTodayDate = new Date();
+        const dateInSelectedTz = zonedTimeToUtc(defaultTodayDate, formData.timezone);
+        console.log(`
+                Default time zone: ${format(defaultTodayDate, 'yyyy-MM-dd HH:mm:ss')}
+                Time in Paris: ${format(dateInSelectedTz, 'yyyy-MM-dd HH:mm:ss')
+            }`);
+
+        const ff = zonedTimeToUtc(startsAt, formData.timezone)
+        console.log(`
+                Default startsAt: ${startsAt}
+                ff: ${format(ff, 'yyyy-MM-dd HH:mm:ss')
+            }`);
 
         if (isBefore(startsAt, new Date()) || isEqual(new Date(), startsAt)) {
             errors.startsAt = "Start date can't be of past date";
@@ -44,9 +62,6 @@ const AddPoll = () => {
             errors.endsAt = "End date should be after start date";
         }
 
-        // TODO: convert date into UTC using format yyyy-dd-MMThh:mm:ss and set it into formstate
-        formData.startsAt = formData.startsAt.concat(':00');
-        formData.endsAt = formData.endsAt.concat(':00');
         setFormState((prevState) => ({
             ...prevState,
             errors: errors,
@@ -61,6 +76,9 @@ const AddPoll = () => {
         let errors = validateAddPollForm();
         if (isEmpty(errors)) {
             const { formData } = formState;
+            // TODO: convert date into UTC using format yyyy-dd-MMThh:mm:ss and set it into formstate
+            formData.startsAt = formData.startsAt.concat(':00');
+            formData.endsAt = formData.endsAt.concat(':00');
             try {
                 await axiosInstance.post("/poll", {
                     ...formData
@@ -182,6 +200,32 @@ const AddPoll = () => {
                                         <div id="error-message-section">
                                             <p id="error-message" style={{ color: "red" }}>
                                                 {formState.errors.endsAt}
+                                            </p>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+
+                            <div className="form-group mb-3 row">
+                                <div className="col-1">
+                                    <label htmlFor="timezone" className="col-form-label">Timezone</label>
+                                </div>
+                                <div className="col-11">
+                                    <select
+                                        className="form-control w-50"
+                                        aria-label="Timezone"
+                                        onChange={handleInputChange}
+                                        id="timezone"
+                                        name="timezone"
+                                    >
+                                        {
+                                            Intl.supportedValuesOf('timeZone').map(tz => <option key={tz} value={tz}>{tz}</option>)
+                                        }
+                                    </select>
+                                    {formState.errors.timezone && (
+                                        <div id="error-message-section">
+                                            <p id="error-message" style={{ color: "red" }}>
+                                                {formState.errors.timezone}
                                             </p>
                                         </div>
                                     )}

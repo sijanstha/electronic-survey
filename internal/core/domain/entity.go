@@ -41,6 +41,7 @@ type Poll struct {
 	State       PollState `json:"state"`
 	StartsAt    time.Time `json:"startsAt"`
 	EndsAt      time.Time `json:"endsAt"`
+	Timezone    string    `json:"timezone"`
 }
 
 type PollOrganizer struct {
@@ -51,16 +52,16 @@ type PollOrganizer struct {
 }
 
 type PaginationDetails struct {
-	Size  int `json:"pageSize"`
-	Page  int `json:"page"`
-	Total int `json:"totalRecords"`
+	Size       int `json:"pageSize"`
+	Page       int `json:"page"`
+	Total      int `json:"totalRecords"`
 	TotalPages int `json:"totalPages"`
 }
 
 type PollWithOrganizerInfo struct {
 	Poll
 	FullName string `json:"primaryOrganizerName"`
-	Email string `json:"primaryOrganizerEmail"`
+	Email    string `json:"primaryOrganizerEmail"`
 }
 
 type PollPaginationDetails struct {

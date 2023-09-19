@@ -127,7 +127,7 @@ func (s *pollService) UpdatePoll(ctx context.Context, req *domain.UpdatePollRequ
 		}
 	}
 
-	toUpdatePoll := domain.NewPoll(req.Id, req.Title, req.Description, startsAt, endsAt, "", true)
+	toUpdatePoll := domain.NewPoll(req.Id, req.Title, req.Description, startsAt, endsAt, req.Timezone, "", true)
 
 	return s.pollRepo.UpdatePoll(toUpdatePoll)
 }
