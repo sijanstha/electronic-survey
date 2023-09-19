@@ -301,28 +301,6 @@ func (r *pollMysqlRepository) FindAllPollInVotingStateInDateRange(from time.Time
 	return polls, nil
 }
 
-func (r *pollMysqlRepository) Init() error {
-	query := `
-		create table if not exists poll (
-			id int not null auto_increment primary key,
-			title varchar(100) not null unique,
-			description longtext,
-			state varchar(50) not null default "PREPARED",
-			starts_at datetime not null,
-			ends_at datetime not null,
-			timezone varchar(100) not null,
-			created_at timestamp not null,
-			updated_at timestamp not null
-		)
-	`
-	_, err := r.db.Exec(query)
-	if err != nil {
-		return &commonError.ErrInternalServer{Message: err.Error()}
-	}
-
-	return nil
-}
-
 func (r *pollMysqlRepository) scanPollRow(rows *sql.Rows) (*domain.Poll, error) {
 	poll := new(domain.Poll)
 	err := rows.Scan(&poll.Id,

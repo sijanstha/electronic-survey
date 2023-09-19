@@ -12,6 +12,7 @@ WORKDIR /app
 
 COPY go.mod .
 COPY go.sum .
+COPY db/migration ./db/migration
 
 RUN go mod download
 COPY . .

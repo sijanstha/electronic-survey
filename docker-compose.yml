@@ -24,6 +24,7 @@ services:
       DATA_SOURCE_PASSWORD: admin
       DB_NAME: "evsdb"
       PROFILE: docker
+      MIGRATION_URL: "file://db/migration"
     depends_on:
       - db
     ports:
