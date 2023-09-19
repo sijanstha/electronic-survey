@@ -2,9 +2,10 @@ import React, { useState } from "react";
 import Sidebar from "../fragment/Sidebar";
 import Navbar from "../fragment/Navbar";
 import { isEmpty } from "../../shared/validator";
-import { isBefore, isEqual } from "date-fns";
+import { isBefore, isEqual, parseISO } from "date-fns";
 import { axiosInstance } from "../../axiosConfig";
 import { useNavigate } from "react-router-dom";
+import { format, utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz'
 
 const AddPoll = () => {
     const navigate = useNavigate();
@@ -35,6 +36,19 @@ const AddPoll = () => {
 
         let startsAt = new Date(formData.startsAt);
         let endsAt = new Date(formData.endsAt);
+
+        const defaultTodayDate = new Date();
+        const dateInSelectedTz = zonedTimeToUtc(defaultTodayDate, formData.timezone);
+        console.log(`
+                Default time zone: ${format(defaultTodayDate, 'yyyy-MM-dd HH:mm:ss')}
+                Time in Paris: ${format(dateInSelectedTz, 'yyyy-MM-dd HH:mm:ss')
+            }`);
+
+        const ff = zonedTimeToUtc(startsAt, formData.timezone)
+        console.log(`
+                Default startsAt: ${startsAt}
+                ff: ${format(ff, 'yyyy-MM-dd HH:mm:ss')
+            }`);
 
         if (isBefore(startsAt, new Date()) || isEqual(new Date(), startsAt)) {
             errors.startsAt = "Start date can't be of past date";
