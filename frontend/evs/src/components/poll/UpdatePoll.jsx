@@ -1,24 +1,60 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Sidebar from "../fragment/Sidebar";
 import Navbar from "../fragment/Navbar";
 import { isEmpty } from "../../shared/validator";
 import { axiosInstance } from "../../axiosConfig";
-import { useNavigate } from "react-router-dom";
-import {DateTime} from "luxon";
+import { useNavigate, useParams } from "react-router-dom";
+import { DateTime } from "luxon";
 import { useAlert } from "react-alert";
 
-const AddPoll = () => {
+const UpdatePoll = () => {
     const navigate = useNavigate();
+    const routeParams = useParams();
     const alert = useAlert();
 
     const [formState, setFormState] = useState({
-        formData: { title: '', description: '', strStartsAt: '', strEndsAt: '', timezone: '', startsAt:'', endsAt:'' },
+        formData: { title: '', description: '', strStartsAt: '', strEndsAt: '', timezone: '', startsAt: '', endsAt: '', id: '' },
         errors: { title: '', startsAt: '', endsAt: '', timezone: '' }
     });
 
-    const validateAddPollForm = () => {
+    useEffect(() => {
+        if(isNaN(routeParams.id)) {
+            alert.error(`Invalid poll id ${routeParams.id}`)
+            navigate('/poll')
+            return;
+        }
+
+        const pollId = parseInt(routeParams.id);
+        axiosInstance.get(`/poll/${pollId}`)
+            .then(resp => {
+                const { body } = resp.data;
+                const formData = {
+                    id: pollId,
+                    title: body.title,
+                    description: body.description,
+                    startsAt: body.startsAt,
+                    endsAt: body.endsAt,
+                    strStartsAt: DateTime.fromISO(body.startsAt).setZone(body.timezone).toFormat('yyyy-MM-dd HH:mm'),
+                    strEndsAt: DateTime.fromISO(body.endsAt).setZone(body.timezone).toFormat('yyyy-MM-dd HH:mm'),
+                    timezone: body.timezone
+                };
+                console.log('fetched form data', formData)
+                setFormState((prevState) => ({
+                    ...prevState,
+                    formData: formData,
+                }));
+
+            })
+            .catch(err => {
+                alert.error(`Poll with id ${pollId} not found`);
+                navigate('/poll');
+            });
+    }, [])
+
+    const validateUpdatePollForm = () => {
         let errors = {};
         const { formData } = formState;
+        console.log('before', formData);
 
         if (isEmpty(formData.title)) {
             errors.title = "Title can't be blank";
@@ -36,8 +72,8 @@ const AddPoll = () => {
             errors.timezone = "Timezone can't be blank";
         }
 
-        const startsAt = DateTime.fromISO(formData.strStartsAt, {zone: formData.timezone}).toUTC();
-        const endsAt = DateTime.fromISO(formData.strEndsAt, {zone: formData.timezone}).toUTC();
+        const startsAt = DateTime.fromISO(formData.strStartsAt, { zone: formData.timezone }).toUTC();
+        const endsAt = DateTime.fromISO(formData.strEndsAt, { zone: formData.timezone }).toUTC();
         const today = DateTime.local().toUTC();
 
         if (startsAt.diff(today) <= 0) {
@@ -55,25 +91,26 @@ const AddPoll = () => {
         formData.startsAt = startsAt.toISO();
         formData.endsAt = endsAt.toISO();
 
+        console.log('after', formData)
         setFormState((prevState) => ({
             ...prevState,
-            errors: errors,
+            errors: errors
         }));
 
         return errors;
     };
 
-    const handleAddPoll = async (e) => {
+    const handleUpdatePoll = async (e) => {
         e.preventDefault();
 
-        let errors = validateAddPollForm();
+        let errors = validateUpdatePollForm();
         if (isEmpty(errors)) {
             const { formData } = formState;
             try {
-                await axiosInstance.post("/poll", {
+                await axiosInstance.put("/poll", {
                     ...formData
                 });
-                alert.success("Poll added successfully");
+                alert.success("Poll updated successfully");
                 navigate("/poll", { replace: true });
             } catch (err) {
                 console.log('errss', err)
@@ -111,7 +148,7 @@ const AddPoll = () => {
                     <div className="container-fluid">
                         <h4>Add Poll</h4>
                         <hr />
-                        <form className="card-body cardbody-color p-lg-5" onSubmit={handleAddPoll}>
+                        <form className="card-body cardbody-color p-lg-5" onSubmit={handleUpdatePoll}>
                             <div className="form-group mb-3 row">
                                 <div className="col-1">
                                     <label htmlFor="title" className="col-form-label">Title</label>
@@ -208,6 +245,7 @@ const AddPoll = () => {
                                         onChange={handleInputChange}
                                         id="timezone"
                                         name="timezone"
+                                        value={formState.formData?.timezone}
                                     >
                                         {
                                             Intl.supportedValuesOf('timeZone').map(tz => <option key={tz} value={tz}>{tz}</option>)
@@ -228,7 +266,7 @@ const AddPoll = () => {
                                 </div>
                                 <div className="col-11">
                                     <div className="d-flex justify-content-end w-50">
-                                        <button type="submit" className="btn btn-sm btn-dark mt-2">Add Poll</button>
+                                        <button type="submit" className="btn btn-sm btn-dark mt-2">Update Poll</button>
                                     </div>
                                 </div>
                             </div>
@@ -240,4 +278,4 @@ const AddPoll = () => {
     );
 }
 
-export default AddPoll;
+export default UpdatePoll;

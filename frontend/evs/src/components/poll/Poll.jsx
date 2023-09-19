@@ -138,6 +138,7 @@ const Poll = () => {
 
         setPostListFilter((prevState) => ({
             ...prevState,
+            page: 1,
             states: updatedStates,
         }));
     };
@@ -205,7 +206,7 @@ const Poll = () => {
                                     </select>
                                 </div>
                                 <div className="position-relative">
-                                    <label onClick={()=> setShowDropdown(!showDropdown)}>Filter by Poll state:</label>
+                                    <label onClick={() => setShowDropdown(!showDropdown)}>Filter by Poll state:</label>
                                     {showDropdown && <div className="filter-dropdown shadow">
                                         {pollListFilter?.states.map((poll, index) => {
                                             return (
@@ -249,7 +250,9 @@ const Poll = () => {
                                             <tr key={poll.id}>
                                                 <th scope="row">{idx + 1}</th>
                                                 <td>{poll.title}</td>
-                                                <td>{poll.description}</td>
+                                                <td>{poll.description.length > 50 ?
+                                                    `${poll.description.substring(0, 50)}...` : poll.description
+                                                }</td>
                                                 <td>{DateTime.fromISO(poll.startsAt).setZone(poll.timezone).toFormat('EEE, MMM yyyy hh:mm a')}</td>
                                                 <td>{DateTime.fromISO(poll.endsAt).setZone(poll.timezone).toFormat('EEE, MMM yyyy hh:mm a')}</td>
                                                 <td>{poll.timezone}</td>
@@ -263,7 +266,7 @@ const Poll = () => {
                                                             </a>
                                                         </div>
                                                         <div>
-                                                            <a href="#" title="Edit Poll">
+                                                            <a href={`/poll/edit/${poll.id}`} title="Edit Poll">
                                                                 <i className="fa fa-edit"></i>
                                                             </a>
                                                         </div>

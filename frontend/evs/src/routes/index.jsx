@@ -6,6 +6,7 @@ import Poll from "../components/poll/Poll";
 import Register from "../components/register/Register";
 import Dashboard from "../components/dashboard/Dashboard";
 import AddPoll from "../components/poll/AddPoll";
+import UpdatePoll from "../components/poll/UpdatePoll";
 
 // https://dev.to/sanjayttg/jwt-authentication-in-react-with-react-router-1d03
 const Routes = () => {
@@ -44,6 +45,14 @@ const Routes = () => {
         {
           path: "/poll/add",
           element: <AddPoll />,
+        },
+        {
+          path: "/poll/edit",
+          element: <UpdatePoll />,
+        },
+        {
+          path: "/poll/edit/:id",
+          element: <UpdatePoll />,
         },
         {
           path: "/admin",

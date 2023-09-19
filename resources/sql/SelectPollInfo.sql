@@ -4,10 +4,10 @@ select json_object(
                'description', res.description,
                'state', res.state,
                'timezone', res.timezone,
-               'startsAt', date_format(res.starts_at, '%%Y-%%m-%%dT%%H:%%i:%%S'),
-               'endsAt', date_format(res.ends_at, '%%Y-%%m-%%dT%%H:%%i:%%S'),
-               'createdAt', date_format(res.created_at, '%%Y-%%m-%%dT%%H:%%i:%%S'),
-               'updatedAt', date_format(res.updated_at, '%%Y-%%m-%%dT%%H:%%i:%%S'),
+               'startsAt', date_format(res.starts_at, '%%Y-%%m-%%dT%%H:%%i:%%S.000Z'),
+               'endsAt', date_format(res.ends_at, '%%Y-%%m-%%dT%%H:%%i:%%S.000Z'),
+               'createdAt', date_format(res.created_at, '%%Y-%%m-%%dT%%H:%%i:%%S.000Z'),
+               'updatedAt', date_format(res.updated_at, '%%Y-%%m-%%dT%%H:%%i:%%S.000Z'),
                'pollOrganizers', json_arrayagg(
                        json_object(
                                'email', res.email,
