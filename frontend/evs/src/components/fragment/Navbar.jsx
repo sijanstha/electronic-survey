@@ -4,12 +4,13 @@ import { useAuth } from "../../provider/authProvider";
 
 const Navbar = () => {
     const navigate = useNavigate();
-    const { setToken } = useAuth();
+    const { setToken, getLoggedInUserInfo } = useAuth();
 
     const handleLogout = () => {
         setToken();
         navigate('/login');
     }
+    console.log('from navbar: logged in user info: ', getLoggedInUserInfo());
     return (
         <React.Fragment>
             <nav className="navbar navbar-expand-lg bg-body-tertiary mb-5 p-2" style={{ "boxShadow": "rgba(0, 0, 0, 0.1) 0px 4px 12px" }}>
@@ -25,8 +26,13 @@ const Navbar = () => {
                         <div className="d-flex list-style-none" style={{ "listStyle": "none" }}>
                             <li className="nav-item dropdown">
                                 {/* TODO: parse JWT token to get logged in user information on navigation bar */}
+<<<<<<< HEAD
                                 <a className="nav-link dropdown-toggle" href=" " role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     Email
+=======
+                                <a className="nav-link dropdown-toggle" href="" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    {getLoggedInUserInfo().email}
+>>>>>>> 7da38ea (add jwt parser in fe)
                                 </a>
                                 <ul className="dropdown-menu">
                                     <li><a className="dropdown-item" onClick={handleLogout} href=" ">Logout</a></li>
