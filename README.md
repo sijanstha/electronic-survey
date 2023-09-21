@@ -5,9 +5,9 @@ Electronic survey aims to help organizers to manage their poll and attendees.
 If you wish to run the project in docker then, you must ensure that docker is setup into your local machine and is up and running.
 
 - Check if docker is installed into your system by issuing command: 
-```
-docker -v
-```
+  ```
+  docker -v
+  ```
 - Clone the project
   ```
   git clone https://github.com/sijanstha/electronic-survey.git
