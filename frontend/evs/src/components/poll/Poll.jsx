@@ -72,20 +72,6 @@ const Poll = () => {
         },
     ];
 
-    const getPolls = async () => {
-        try {
-            let state = "(";
-            state += pollListFilter.states.filter(state => state.isChecked).map(state => state.value).join(",").concat(")");
-            const response = await axiosInstance.get(
-                `/poll?showOwnPoll=${pollListFilter.showOwnPoll}&sort=${pollListFilter.sort}&sortBy=${pollListFilter.sortBy}&limit=${pollListFilter.limit}&page=${pollListFilter.page}&state=${state}`
-            );
-            const { data } = response;
-            return data;
-        } catch (err) {
-            console.log(err);
-        }
-    };
-
     const handlePagination = (e) => {
         e.preventDefault();
         const target = e.target;
@@ -144,6 +130,20 @@ const Poll = () => {
     };
 
     useEffect(() => {
+        const getPolls = async () => {
+            try {
+                let state = "(";
+                state += pollListFilter.states.filter(state => state.isChecked).map(state => state.value).join(",").concat(")");
+                const response = await axiosInstance.get(
+                    `/poll?showOwnPoll=${pollListFilter.showOwnPoll}&sort=${pollListFilter.sort}&sortBy=${pollListFilter.sortBy}&limit=${pollListFilter.limit}&page=${pollListFilter.page}&state=${state}`
+                );
+                const { data } = response;
+                return data;
+            } catch (err) {
+                console.log(err);
+            }
+        };
+        
         getPolls().then(
             result => setApiResponse(result));
     }, [pollListFilter]);
@@ -260,20 +260,16 @@ const Poll = () => {
                                                 <td>{poll.primaryOrganizerName}</td>
                                                 <td className="d-flex">
                                                     <div className="d-flex justify-content-center align-items-center gap-2">
-                                                        <div>
-                                                            <a href="#" title="Start Poll">
-                                                                <i className="fa fa-play"></i>
-                                                            </a>
+                                                        <div title="Start Poll">
+                                                            <i className="fa fa-play"></i>
                                                         </div>
                                                         <div>
                                                             <a href={`/poll/edit/${poll.id}`} title="Edit Poll">
                                                                 <i className="fa fa-edit"></i>
                                                             </a>
                                                         </div>
-                                                        <div>
-                                                            <a href="#" title="Delete Poll">
-                                                                <i className="fa fa-trash"></i>
-                                                            </a>
+                                                        <div title="Delete Poll">
+                                                            <i className="fa fa-trash"></i>
                                                         </div>
                                                     </div>
                                                 </td>
@@ -286,7 +282,7 @@ const Poll = () => {
                                     <ul className="pagination">
                                         {apiResponse?.data && ([...Array(apiResponse.totalPages)].map((x, i) =>
                                             <li className="page-item" key={i}>
-                                                <a className="page-link" page={i + 1} href="#" onClick={handlePagination}>{i + 1}</a>
+                                                <a className="page-link" page={i + 1} href=" " onClick={handlePagination}>{i + 1}</a>
                                             </li>
                                         ))}
                                     </ul>

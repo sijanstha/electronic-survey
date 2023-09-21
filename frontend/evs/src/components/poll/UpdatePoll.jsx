@@ -49,7 +49,7 @@ const UpdatePoll = () => {
                 alert.error(`Poll with id ${pollId} not found`);
                 navigate('/poll');
             });
-    }, [])
+    }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
     const validateUpdatePollForm = () => {
         let errors = {};
