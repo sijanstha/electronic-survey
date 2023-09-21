@@ -1,6 +1,12 @@
 name: EVS
 
-on: [push]
+on:
+  push: 
+    branches-ignore: [main]
+  
+  pull_request: 
+    branches: [main]
+
 
 jobs:
     build-backend:
@@ -20,3 +26,33 @@ jobs:
             
             - name: Test
               run: go test -v ./...
+    
+    build-frontend:
+      runs-on: ubuntu-latest
+      steps: 
+        - name: Checkout repository
+          uses: actions/checkout@v4
+        
+        - name: Set up Node.js
+          uses: actions/setup-node@v1
+          with:
+            node-version: '20.5.0'
+        
+        - name: Install Yarn
+          run: npm install --global yarn
+        
+        - name: Install dependencies
+          run: yarn install
+        
+        - name: Cache dependencies
+          uses: actions/cache@v2
+          with:
+            path: |
+              **/node_modules
+            key: ${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
+        
+        - name: Run the tests
+          run: yarn test
+        
+        - name: Build
+          run: yarn build
