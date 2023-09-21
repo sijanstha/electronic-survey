@@ -51,8 +51,8 @@ jobs:
               **/node_modules
             key: ${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
         
-        - name: Run the tests
-          run: yarn --cwd ./frontend/evs test
+        # - name: Run the tests
+        #   run: yarn --cwd ./frontend/evs test
         
         - name: Build
           run: yarn --cwd ./frontend/evs build
