@@ -23,6 +23,10 @@ If you wish to run the project in docker then, you must ensure that docker is se
   ```
   make start
   ```
+  If you are running the service for the first time, before starting you need to create docker network using:
+  ```
+  make create-network
+  ```
   To stop the running backend service
   ```
   make stop
