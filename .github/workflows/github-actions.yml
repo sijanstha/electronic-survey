@@ -1,0 +1,58 @@
+name: EVS
+
+on:
+  push: 
+    branches-ignore: [main]
+  
+  pull_request: 
+    branches: [main]
+
+
+jobs:
+    build-backend:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - name: Set up Go
+              uses: actions/setup-go@v4
+              with:
+                go-version: '1.19'
+            
+            - name: Install dependeincies
+              run: go get .
+          
+            - name: Build
+              run: go build -v ./...
+            
+            - name: Test
+              run: go test -v ./...
+    
+    build-frontend:
+      runs-on: ubuntu-latest
+      steps: 
+        - name: Checkout repository
+          uses: actions/checkout@v4
+        
+        - name: Set up Node.js
+          uses: actions/setup-node@v1
+          with:
+            node-version: '20.5.0'
+        
+        - name: Install Yarn
+          run: npm install --global yarn
+        
+        - name: Install dependencies
+          run: yarn --cwd ./frontend/evs install
+        
+        - name: Cache dependencies
+          uses: actions/cache@v2
+          with:
+            path: |
+              **/node_modules
+            key: ${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
+        
+        # - name: Run the tests
+        #   run: yarn --cwd ./frontend/evs test
+        
+        - name: Build
+          run: yarn --cwd ./frontend/evs build
