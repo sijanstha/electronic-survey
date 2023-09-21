@@ -1,0 +1,22 @@
+name: EVS
+
+on: [push]
+
+jobs:
+    build-backend:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - name: Set up Go
+              uses: action/setup-go@v4
+              with:
+                go-version: '1.19'
+            
+            - name: Install dependeincies
+              run: go get .
+          
+            - name: Build
+              run: make build
+            
+            - name: Test
+              run: make test
