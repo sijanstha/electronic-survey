@@ -40,7 +40,7 @@ const AuthProvider = ({ children }) => {
       setToken,
       getLoggedInUserInfo,
     }),
-    [token]
+    [token,getLoggedInUserInfo]
   );
 
   console.log(getLoggedInUserInfo());

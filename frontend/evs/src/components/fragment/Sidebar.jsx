@@ -1,5 +1,7 @@
 import React from "react";
 import "./sidebar.css";
+import { Link } from "react-router-dom";
+
 const Sidebar = () => {
   return (
     <React.Fragment>
@@ -9,24 +11,24 @@ const Sidebar = () => {
                     </header>
                     <ul className="nav">
                         <li>
-                            <a href="/">
+                            <Link to="/">
                                 <i className="zmdi zmdi-view-dashboard"></i> Dashboard
-                            </a>
+                            </Link>
                         </li>
                         <li>
-                            <a href="/admin/organizers">
+                            <Link to="/admin/organizers">
                                 <i className="zmdi zmdi-link"></i> Manage Organizers
-                            </a>
+                            </Link>
                         </li>
                         <li>
-                            <a href="/poll/add">
+                            <Link to="/poll/add">
                                 <i className="zmdi zmdi-calendar"></i> Add Poll
-                            </a>
+                            </Link>
                         </li>
                         <li>
-                            <a href="/poll">
+                            <Link to="/poll">
                                 <i className="zmdi zmdi-calendar"></i> Manage Polls
-                            </a>
+                            </Link>
                         </li>
                     </ul>
                 </div>
