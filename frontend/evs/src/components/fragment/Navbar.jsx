@@ -25,11 +25,11 @@ const Navbar = () => {
                         <div className="d-flex list-style-none" style={{ "listStyle": "none" }}>
                             <li className="nav-item dropdown">
                                 {/* TODO: parse JWT token to get logged in user information on navigation bar */}
-                                <a className="nav-link dropdown-toggle" href="" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <a className="nav-link dropdown-toggle" href=" " role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     Email
                                 </a>
                                 <ul className="dropdown-menu">
-                                    <li><a className="dropdown-item" onClick={handleLogout}>Logout</a></li>
+                                    <li><a className="dropdown-item" onClick={handleLogout} href=" ">Logout</a></li>
                                 </ul>
                             </li>
                         </div>
