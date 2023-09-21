@@ -1,7 +1,7 @@
 # Electronic Survey
 Electronic survey aims to help organizers to manage their poll and attendees.
 
-# Tools used
+## Tools used
 - Go (v 1.19.4)
 - Mysql
 - React
