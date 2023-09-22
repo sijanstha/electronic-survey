@@ -15,7 +15,7 @@ import (
 	"go.uber.org/mock/gomock"
 )
 
-func initTest(t *testing.T) (ports.AuthenticationService, *mockrepository.MockUserRepository, *mockservice.MockTokenService) {
+func initTestForAuthentication(t *testing.T) (ports.AuthenticationService, *mockrepository.MockUserRepository, *mockservice.MockTokenService) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
@@ -25,8 +25,8 @@ func initTest(t *testing.T) (ports.AuthenticationService, *mockrepository.MockUs
 	return NewAuthenticationService(userRepo, tokenService), userRepo, tokenService
 }
 
-func TestForEmailValidationError(t *testing.T) {
-	service, _, _ := initTest(t)
+func TestEmailValidationErrorForAuthentication(t *testing.T) {
+	service, _, _ := initTestForAuthentication(t)
 
 	resp, err := service.Authenticate(&domain.LoginRequest{
 		Email:    "",
@@ -40,8 +40,8 @@ func TestForEmailValidationError(t *testing.T) {
 	require.ErrorContains(t, err, "email cannot be null or empty")
 }
 
-func TestForPasswordValidationError(t *testing.T) {
-	service, _, _ := initTest(t)
+func TestPasswordValidationErrorForAuthentication(t *testing.T) {
+	service, _, _ := initTestForAuthentication(t)
 
 	resp, err := service.Authenticate(&domain.LoginRequest{
 		Email:    utils.RandomEmail(),
@@ -55,8 +55,8 @@ func TestForPasswordValidationError(t *testing.T) {
 	require.ErrorContains(t, err, "password cannot be null or empty")
 }
 
-func TestForEmailNotExistsError(t *testing.T) {
-	service, userRepo, _ := initTest(t)
+func TestEmailNotExistsErrorForAuthentication(t *testing.T) {
+	service, userRepo, _ := initTestForAuthentication(t)
 
 	email := utils.RandomEmail()
 	userRepo.EXPECT().FindByEmail(email).Times(1).Return(nil, &commonError.ErrNotFound{Message: fmt.Sprintf("%s not found", email)})
@@ -73,8 +73,8 @@ func TestForEmailNotExistsError(t *testing.T) {
 	require.ErrorContains(t, err, "not found")
 }
 
-func TestForInvalidPasswordError(t *testing.T) {
-	service, userRepo, _ := initTest(t)
+func TestInvalidPasswordErrorForAuthentication(t *testing.T) {
+	service, userRepo, _ := initTestForAuthentication(t)
 
 	user := randomUser(utils.RandomString(10))
 	userRepo.EXPECT().FindByEmail(user.Email).Times(1).Return(user, nil)
@@ -92,7 +92,7 @@ func TestForInvalidPasswordError(t *testing.T) {
 }
 
 func TestForAuthentication(t *testing.T) {
-	service, userRepo, tokenService := initTest(t)
+	service, userRepo, tokenService := initTestForAuthentication(t)
 
 	password := utils.RandomString(10)
 	user := randomUser(password)
