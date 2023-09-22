@@ -8,21 +8,26 @@ import (
 	mockrepository "github.com/sijanstha/electronic-voting-system/internal/adapters/repository/mock"
 	"github.com/sijanstha/electronic-voting-system/internal/core/domain"
 	commonError "github.com/sijanstha/electronic-voting-system/internal/core/error"
+	"github.com/sijanstha/electronic-voting-system/internal/core/ports"
 	mockservice "github.com/sijanstha/electronic-voting-system/internal/core/services/mock"
 	"github.com/sijanstha/electronic-voting-system/internal/core/utils"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
 )
 
-func TestForEmailValidationError(t *testing.T) {
-
+func initTest(t *testing.T) (ports.AuthenticationService, *mockrepository.MockUserRepository, *mockservice.MockTokenService) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
 	userRepo := mockrepository.NewMockUserRepository(ctrl)
 	tokenService := mockservice.NewMockTokenService(ctrl)
 
-	service := NewAuthenticationService(userRepo, tokenService)
+	return NewAuthenticationService(userRepo, tokenService), userRepo, tokenService
+}
+
+func TestForEmailValidationError(t *testing.T) {
+	service, _, _ := initTest(t)
+
 	resp, err := service.Authenticate(&domain.LoginRequest{
 		Email:    "",
 		Password: utils.RandomString(10),
@@ -36,14 +41,8 @@ func TestForEmailValidationError(t *testing.T) {
 }
 
 func TestForPasswordValidationError(t *testing.T) {
+	service, _, _ := initTest(t)
 
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	userRepo := mockrepository.NewMockUserRepository(ctrl)
-	tokenService := mockservice.NewMockTokenService(ctrl)
-
-	service := NewAuthenticationService(userRepo, tokenService)
 	resp, err := service.Authenticate(&domain.LoginRequest{
 		Email:    utils.RandomEmail(),
 		Password: "",
@@ -57,17 +56,11 @@ func TestForPasswordValidationError(t *testing.T) {
 }
 
 func TestForEmailNotExistsError(t *testing.T) {
-
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	userRepo := mockrepository.NewMockUserRepository(ctrl)
-	tokenService := mockservice.NewMockTokenService(ctrl)
+	service, userRepo, _ := initTest(t)
 
 	email := utils.RandomEmail()
 	userRepo.EXPECT().FindByEmail(email).Times(1).Return(nil, &commonError.ErrNotFound{Message: fmt.Sprintf("%s not found", email)})
 
-	service := NewAuthenticationService(userRepo, tokenService)
 	resp, err := service.Authenticate(&domain.LoginRequest{
 		Email:    email,
 		Password: utils.RandomString(10),
@@ -81,17 +74,11 @@ func TestForEmailNotExistsError(t *testing.T) {
 }
 
 func TestForInvalidPasswordError(t *testing.T) {
-
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	userRepo := mockrepository.NewMockUserRepository(ctrl)
-	tokenService := mockservice.NewMockTokenService(ctrl)
+	service, userRepo, _ := initTest(t)
 
 	user := randomUser(utils.RandomString(10))
 	userRepo.EXPECT().FindByEmail(user.Email).Times(1).Return(user, nil)
 
-	service := NewAuthenticationService(userRepo, tokenService)
 	resp, err := service.Authenticate(&domain.LoginRequest{
 		Email:    user.Email,
 		Password: utils.RandomString(10),
@@ -105,12 +92,7 @@ func TestForInvalidPasswordError(t *testing.T) {
 }
 
 func TestForAuthentication(t *testing.T) {
-
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	userRepo := mockrepository.NewMockUserRepository(ctrl)
-	tokenService := mockservice.NewMockTokenService(ctrl)
+	service, userRepo, tokenService := initTest(t)
 
 	password := utils.RandomString(10)
 	user := randomUser(password)
@@ -119,7 +101,6 @@ func TestForAuthentication(t *testing.T) {
 	tokenService.EXPECT().Generate(*user).Times(1).Return(token, nil)
 	userRepo.EXPECT().FindByEmail(user.Email).Times(1).Return(user, nil)
 
-	service := NewAuthenticationService(userRepo, tokenService)
 	resp, err := service.Authenticate(&domain.LoginRequest{
 		Email:    user.Email,
 		Password: password,
