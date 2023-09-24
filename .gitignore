@@ -16,6 +16,8 @@ init-db/
 # production
 /frontend/evs/build
 
+.vscode/
+
 # misc
 .DS_Store
 .env.local
