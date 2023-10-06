@@ -68,3 +68,15 @@ type PollPaginationDetails struct {
 	PaginationDetails
 	Data []PollWithOrganizerInfo `json:"data"`
 }
+
+type ParticipantList struct {
+	BaseEntity
+	Name        string   `json:"name"`
+	Emails      []string `json:"emails"`
+	OrganizerId int64    `json:"organizerId"`
+}
+
+type ParticipantPaginationDetails struct {
+	PaginationDetails
+	Data []ParticipantList `json:"data"`
+}

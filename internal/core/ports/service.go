@@ -25,3 +25,9 @@ type TokenService interface {
 	Generate(domain.User) (string, error)
 	Validate(token string) (*domain.Claims, error)
 }
+
+type ParticipantListService interface {
+	SaveParticipantList(context.Context, *domain.CreateParticipantListRequest) (*domain.ParticipantList, error)
+	GetParticipantListById(context.Context, int64) (*domain.ParticipantList, error)
+	GetParticipantListByName(context.Context, string) (*domain.ParticipantList, error)
+}

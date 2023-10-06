@@ -22,6 +22,7 @@ var pollService ports.PollService
 var userService ports.UserService
 var authService ports.AuthenticationService
 var jwtService ports.TokenService
+var participantListService ports.ParticipantListService
 
 type ApiServer struct {
 	listenAddr string
@@ -36,22 +37,25 @@ func (s *ApiServer) Run() {
 	pollRepo := repository.NewPollMysqlRepository(s.db)
 	userRepo := repository.NewUserRepository(s.db)
 	pollOrganizerRepo := repository.NewPollOrganizerRepository(s.db)
+	participantListRepo := repository.NewParticipantListRepository(s.db)
 
 	jwtService = services.NewJwtService()
 	pollService = services.NewPollService(pollRepo, pollOrganizerRepo)
 	userService = services.NewUserService(userRepo)
 	authService = services.NewAuthenticationService(userRepo, jwtService)
+	participantListService = services.NewParticipantListService(participantListRepo)
 
 	router := mux.NewRouter()
 	router = router.PathPrefix("/api").Subrouter()
 	s.registerPublicRoutes(router)
 	s.registerPollRoutes(router)
+	s.registerParticipantListRoutes(router)
 
 	c := cors.New(cors.Options{
 		AllowedOrigins:   []string{"*"},
 		AllowCredentials: true,
 		AllowedHeaders:   []string{"Accept", "Content-Type", "Authorization", "Referer"},
-		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE"},
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE"},
 	})
 
 	handler := c.Handler(router)
@@ -64,6 +68,11 @@ func (s *ApiServer) registerPollRoutes(router *mux.Router) {
 	pollHandler := handler.NewPollHandler(pollService)
 	router.HandleFunc("/poll", authMiddleware(makeHTTPHandleFunc(pollHandler.HandlePoll))).Methods("POST", "PUT", "GET")
 	router.HandleFunc("/poll/{id}", authMiddleware(makeHTTPHandleFunc(pollHandler.HandleGetPollById))).Methods("GET")
+}
+
+func (s *ApiServer) registerParticipantListRoutes(router *mux.Router) {
+	participantListHandler := handler.NewParticipantListHandler(participantListService)
+	router.HandleFunc("/participant-list", authMiddleware(makeHTTPHandleFunc(participantListHandler.HandleParticipantList))).Methods("POST")
 }
 
 func (s *ApiServer) registerPublicRoutes(router *mux.Router) {

@@ -40,7 +40,7 @@ create-network:
 mock-repository:
 	@mockgen --build_flags=--mod=mod -package=mockrepository \
 	-destination internal/adapters/repository/mock/mock.repository.go \
-	github.com/sijanstha/electronic-voting-system/internal/core/ports UserRepository,PollRepository,PollOrganizerRepository
+	github.com/sijanstha/electronic-voting-system/internal/core/ports UserRepository,PollRepository,PollOrganizerRepository,ParticipantListRepository
 
 mock-service:
 	@mockgen --build_flags=--mod=mod -package=mockservice \

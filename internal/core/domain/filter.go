@@ -18,3 +18,14 @@ type PollListFilter struct {
 	OrganizerId        int64       `json:"organizerId"`
 	FilterPrimaryOwner *bool
 }
+
+type ParticipantListFilter struct {
+	PaginationFilter
+	OrganizerId int64 `json:"organizerId"`
+}
+
+type ParticipantFilter struct {
+	Id          int64
+	Name        string
+	OrganizerId int64
+}

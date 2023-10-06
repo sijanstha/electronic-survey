@@ -25,3 +25,8 @@ type LoginRequest struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
+
+type CreateParticipantListRequest struct {
+	Name   string   `json:"name"`
+	Emails []string `json:"emails"`
+}
