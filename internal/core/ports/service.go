@@ -28,6 +28,8 @@ type TokenService interface {
 
 type ParticipantListService interface {
 	SaveParticipantList(context.Context, *domain.CreateParticipantListRequest) (*domain.ParticipantList, error)
+	UpdateParticipantList(context.Context, *domain.UpdateParticipantList) (*domain.ParticipantList, error)
 	GetParticipantListById(context.Context, int64) (*domain.ParticipantList, error)
 	GetParticipantListByName(context.Context, string) (*domain.ParticipantList, error)
+	GetParticipantList(context.Context, *domain.ParticipantListFilter) (*domain.ParticipantPaginationDetails, error)
 }

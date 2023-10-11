@@ -30,3 +30,9 @@ type CreateParticipantListRequest struct {
 	Name   string   `json:"name"`
 	Emails []string `json:"emails"`
 }
+
+type UpdateParticipantList struct {
+	CreateParticipantListRequest
+	Id          int64 `json:"id"`
+	OrganizerId int64 `json:"organizerId"`
+}

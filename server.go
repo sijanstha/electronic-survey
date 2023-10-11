@@ -72,7 +72,8 @@ func (s *ApiServer) registerPollRoutes(router *mux.Router) {
 
 func (s *ApiServer) registerParticipantListRoutes(router *mux.Router) {
 	participantListHandler := handler.NewParticipantListHandler(participantListService)
-	router.HandleFunc("/participant-list", authMiddleware(makeHTTPHandleFunc(participantListHandler.HandleParticipantList))).Methods("POST")
+	router.HandleFunc("/participant-list", authMiddleware(makeHTTPHandleFunc(participantListHandler.HandleParticipantList))).Methods("POST", "GET", "PUT")
+	router.HandleFunc("/participant-list/{id}", authMiddleware(makeHTTPHandleFunc(participantListHandler.HandleGetParticipantListById))).Methods("GET")
 }
 
 func (s *ApiServer) registerPublicRoutes(router *mux.Router) {

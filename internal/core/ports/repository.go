@@ -26,6 +26,7 @@ type PollOrganizerRepository interface {
 
 type ParticipantListRepository interface {
 	SaveParticipantList(*domain.ParticipantList) (*domain.ParticipantList, error)
-	FindParticipantList(*domain.ParticipantFilter) (*domain.ParticipantList, error)
-	FindAllParticipantList(*domain.ParticipantListFilter) (domain.ParticipantPaginationDetails, error)
+	UpdateParticipantList(*domain.ParticipantList) (*domain.ParticipantList, error)
+	FindParticipantList(*domain.ParticipantListFilter) (*domain.ParticipantList, error)
+	FindAllParticipantList(*domain.ParticipantListFilter) (*domain.ParticipantPaginationDetails, error)
 }

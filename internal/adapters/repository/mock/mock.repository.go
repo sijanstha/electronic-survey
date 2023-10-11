@@ -244,10 +244,10 @@ func (m *MockParticipantListRepository) EXPECT() *MockParticipantListRepositoryM
 }
 
 // FindAllParticipantList mocks base method.
-func (m *MockParticipantListRepository) FindAllParticipantList(arg0 *domain.ParticipantListFilter) (domain.ParticipantPaginationDetails, error) {
+func (m *MockParticipantListRepository) FindAllParticipantList(arg0 *domain.ParticipantListFilter) (*domain.ParticipantPaginationDetails, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FindAllParticipantList", arg0)
-	ret0, _ := ret[0].(domain.ParticipantPaginationDetails)
+	ret0, _ := ret[0].(*domain.ParticipantPaginationDetails)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -259,7 +259,7 @@ func (mr *MockParticipantListRepositoryMockRecorder) FindAllParticipantList(arg0
 }
 
 // FindParticipantList mocks base method.
-func (m *MockParticipantListRepository) FindParticipantList(arg0 *domain.ParticipantFilter) (*domain.ParticipantList, error) {
+func (m *MockParticipantListRepository) FindParticipantList(arg0 *domain.ParticipantListFilter) (*domain.ParticipantList, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FindParticipantList", arg0)
 	ret0, _ := ret[0].(*domain.ParticipantList)
@@ -286,4 +286,19 @@ func (m *MockParticipantListRepository) SaveParticipantList(arg0 *domain.Partici
 func (mr *MockParticipantListRepositoryMockRecorder) SaveParticipantList(arg0 any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SaveParticipantList", reflect.TypeOf((*MockParticipantListRepository)(nil).SaveParticipantList), arg0)
+}
+
+// UpdateParticipantList mocks base method.
+func (m *MockParticipantListRepository) UpdateParticipantList(arg0 *domain.ParticipantList) (*domain.ParticipantList, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateParticipantList", arg0)
+	ret0, _ := ret[0].(*domain.ParticipantList)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpdateParticipantList indicates an expected call of UpdateParticipantList.
+func (mr *MockParticipantListRepositoryMockRecorder) UpdateParticipantList(arg0 any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateParticipantList", reflect.TypeOf((*MockParticipantListRepository)(nil).UpdateParticipantList), arg0)
 }

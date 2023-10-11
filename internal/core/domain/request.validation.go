@@ -114,5 +114,5 @@ func (c *CreateParticipantListRequest) Validate() (*ParticipantList, error) {
 		}
 	}
 
-	return NewParticipantList(*c), nil
+	return NewParticipantList(0, c.Name, c.Emails, false), nil
 }

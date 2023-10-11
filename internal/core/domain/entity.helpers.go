@@ -38,11 +38,11 @@ func NewPollOrganizer(organizerId, pollId int64, isPrimaryOrganizer bool) *PollO
 	}
 }
 
-func NewParticipantList(request CreateParticipantListRequest) *ParticipantList {
+func NewParticipantList(id int64, name string, emails []string, forUpdate bool) *ParticipantList {
 	return &ParticipantList{
-		Name:       request.Name,
-		Emails:     request.Emails,
-		BaseEntity: newBaseEntity(0, false),
+		Name:       name,
+		Emails:     emails,
+		BaseEntity: newBaseEntity(id, forUpdate),
 	}
 }
 
