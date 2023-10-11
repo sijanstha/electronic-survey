@@ -16,6 +16,7 @@ var (
 		"updated_at":  true,
 		"description": true,
 		"id":          true,
+		"name":        true,
 	}
 
 	validSortingOrder = map[string]bool{
