@@ -28,6 +28,11 @@ const Sidebar = () => {
                                 <i className="zmdi zmdi-calendar"></i> Manage Polls
                             </a>
                         </li>
+                        <li>
+                            <a href="/participant-list">
+                                <i className="zmdi zmdi-calendar"></i> Manage Participant List
+                            </a>
+                        </li>
                     </ul>
                 </div>
     </React.Fragment>
