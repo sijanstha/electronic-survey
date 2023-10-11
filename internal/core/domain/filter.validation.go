@@ -7,6 +7,7 @@ import (
 	"github.com/sijanstha/electronic-voting-system/internal/core/utils"
 )
 
+// TODO: Make map of sorting field based upon entity, Currently this list contains generic sorting fields for all the entities
 var (
 	validSortingField = map[string]bool{
 		"title":       true,

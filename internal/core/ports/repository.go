@@ -23,3 +23,10 @@ type UserRepository interface {
 type PollOrganizerRepository interface {
 	SavePollOrganizer(*domain.PollOrganizer) (*domain.PollOrganizer, error)
 }
+
+type ParticipantListRepository interface {
+	SaveParticipantList(*domain.ParticipantList) (*domain.ParticipantList, error)
+	UpdateParticipantList(*domain.ParticipantList) (*domain.ParticipantList, error)
+	FindParticipantList(*domain.ParticipantListFilter) (*domain.ParticipantList, error)
+	FindAllParticipantList(*domain.ParticipantListFilter) (*domain.ParticipantPaginationDetails, error)
+}

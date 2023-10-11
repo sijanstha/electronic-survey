@@ -98,3 +98,21 @@ func (c *LoginRequest) Validate() error {
 
 	return nil
 }
+
+func (c *CreateParticipantListRequest) Validate() (*ParticipantList, error) {
+	if c.Name == "" {
+		return nil, commonError.NewErrBadRequest("name cannot be null or empty")
+	}
+
+	if len(c.Emails) == 0 {
+		return nil, commonError.NewErrBadRequest("please provide at least one email")
+	}
+
+	for _, email := range c.Emails {
+		if !utils.IsValidEmail(email) {
+			return nil, commonError.NewErrBadRequest(fmt.Sprintf("invalid email provided: %s", email))
+		}
+	}
+
+	return NewParticipantList(0, c.Name, c.Emails, false), nil
+}

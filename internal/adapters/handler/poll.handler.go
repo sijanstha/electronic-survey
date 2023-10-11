@@ -70,14 +70,12 @@ func (h *pollHandler) handleUpdatePoll(w http.ResponseWriter, r *http.Request) e
 }
 
 func (h *pollHandler) handleGetPoll(w http.ResponseWriter, r *http.Request) error {
-	page := r.URL.Query().Get("page")
-	limit := r.URL.Query().Get("limit")
-	sort := r.URL.Query().Get("sort")
-	sortBy := r.URL.Query().Get("sortBy")
+	paginationFilter := domain.ParsePaginationRequest(r)
 	state := r.URL.Query().Get("state")
 	showOwnPoll := r.URL.Query().Get("showOwnPoll")
 
-	log.Println(page, limit, sort, sortBy, state, showOwnPoll)
+	log.Println(paginationFilter.Page, paginationFilter.Limit, paginationFilter.Sort,
+		paginationFilter.SortBy, state, showOwnPoll)
 
 	states := make([]domain.PollState, 0)
 	if len(state) > 0 {
@@ -98,12 +96,7 @@ func (h *pollHandler) handleGetPoll(w http.ResponseWriter, r *http.Request) erro
 	}
 
 	filter := domain.PollListFilter{
-		PaginationFilter: domain.PaginationFilter{
-			Limit:  utils.ParseInteger(limit),
-			Page:   utils.ParseInteger(page),
-			Sort:   sort,
-			SortBy: sortBy,
-		},
+		PaginationFilter:   paginationFilter,
 		FilterPrimaryOwner: utils.ParseBoolean(showOwnPoll),
 		States:             states,
 	}
