@@ -3,6 +3,7 @@ import { axiosInstance } from "../../axiosConfig";
 import Sidebar from "../fragment/Sidebar";
 import Navbar from "../fragment/Navbar";
 import { DateTime } from "luxon";
+import { Link } from "react-router-dom";
 
 const Poll = () => {
     const validPollStates = [
@@ -72,6 +73,7 @@ const Poll = () => {
         },
     ];
 
+
     const handlePagination = (e) => {
         e.preventDefault();
         const target = e.target;
@@ -109,7 +111,6 @@ const Poll = () => {
                 ...updatedStates[i],
                 isChecked: true,
             };
-
         } else {
             const index = pollValueArray.findIndex(
                 (value) => value === e.target.value
@@ -143,13 +144,14 @@ const Poll = () => {
                 console.log(err);
             }
         };
-        
+
         getPolls().then(
             result => setApiResponse(result));
+
     }, [pollListFilter]);
 
     return (
-        <React.Fragment>
+        <>
             <div id="viewport">
                 <Sidebar />
                 <Navbar />
@@ -160,54 +162,21 @@ const Poll = () => {
                             <div className="d-flex justify-content-between">
                                 <h4>Polls</h4>
                                 <div>
-                                    <a className="btn btn-dark" href="/poll/add">
+                                    <Link className="btn btn-dark" to="/poll/add">
                                         Add Poll
-                                    </a>
+                                    </Link>
                                 </div>
                             </div>
                             <hr />
                             <div className="d-flex justify-content-between">
-                                <div>
-                                    <label>Sort By:</label>
-                                    <select
-                                        className="form-select form-select-sm"
-                                        aria-label="Sort by"
-                                        onChange={handlePollSortFieldChange}
-                                    >
-                                        {validPollSortFields.length > 0 &&
-                                            validPollSortFields.map((field) => (
-                                                <option
-                                                    key={field.value}
-                                                    selected={field.isDefaultSort}
-                                                    value={field.value}
-                                                >
-                                                    {field.title}
-                                                </option>
-                                            ))}
-                                    </select>
-                                </div>
-                                <div>
-                                    <label>Sort Direction:</label>
-                                    <select
-                                        className="form-select form-select-sm"
-                                        aria-label="Sort direction"
-                                        onChange={handlePollSortDirectionChange}
-                                    >
-                                        {validSortDirection.length > 0 &&
-                                            validSortDirection.map((field) => (
-                                                <option
-                                                    key={field.value}
-                                                    selected={field.isDefaultSort}
-                                                    value={field.value}
-                                                >
-                                                    {field.title}
-                                                </option>
-                                            ))}
-                                    </select>
-                                </div>
+
+
                                 <div className="position-relative">
-                                    <label onClick={() => setShowDropdown(!showDropdown)}>Filter by Poll state:</label>
-                                    {showDropdown && <div className="filter-dropdown shadow">
+                                    <label onClick={() => setShowDropdown(!showDropdown)}>
+                                        Filter by Poll state:
+                                    </label>
+
+                                    <div className="d-flex align-items-center gap-3">
                                         {pollListFilter?.states.map((poll, index) => {
                                             return (
                                                 <div
@@ -225,8 +194,48 @@ const Poll = () => {
                                                 </div>
                                             );
                                         })}
-                                    </div>}
+                                    </div>
+                                </div>
 
+                                <div className="sorts d-flex gap-3 align-items-center">
+                                    <div>
+                                        <label>Sort By:</label>
+                                        <select
+                                            className="form-select form-select-sm"
+                                            aria-label="Sort by"
+                                            onChange={handlePollSortFieldChange}
+                                        >
+                                            {validPollSortFields.length > 0 &&
+                                                validPollSortFields.map((field) => (
+                                                    <option
+                                                        key={field.value}
+                                                        selected={field.isDefaultSort}
+                                                        value={field.value}
+                                                    >
+                                                        {field.title}
+                                                    </option>
+                                                ))}
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label>Sort Direction:</label>
+                                        <select
+                                            className="form-select form-select-sm"
+                                            aria-label="Sort direction"
+                                            onChange={handlePollSortDirectionChange}
+                                        >
+                                            {validSortDirection.length > 0 &&
+                                                validSortDirection.map((field) => (
+                                                    <option
+                                                        key={field.value}
+                                                        selected={field.isDefaultSort}
+                                                        value={field.value}
+                                                    >
+                                                        {field.title}
+                                                    </option>
+                                                ))}
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
                             <hr />
@@ -245,16 +254,26 @@ const Poll = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {apiResponse?.data && (
+                                    {apiResponse?.data &&
                                         apiResponse.data.map((poll, idx) => (
                                             <tr key={poll.id}>
                                                 <th scope="row">{idx + 1}</th>
                                                 <td>{poll.title}</td>
-                                                <td>{poll.description.length > 50 ?
-                                                    `${poll.description.substring(0, 50)}...` : poll.description
-                                                }</td>
-                                                <td>{DateTime.fromISO(poll.startsAt).setZone(poll.timezone).toFormat('EEE, MMM yyyy hh:mm a')}</td>
-                                                <td>{DateTime.fromISO(poll.endsAt).setZone(poll.timezone).toFormat('EEE, MMM yyyy hh:mm a')}</td>
+                                                <td>
+                                                    {poll.description.length > 50
+                                                        ? `${poll.description.substring(0, 50)}...`
+                                                        : poll.description}
+                                                </td>
+                                                <td>
+                                                    {DateTime.fromISO(poll.startsAt)
+                                                        .setZone(poll.timezone)
+                                                        .toFormat("EEE, MMM yyyy hh:mm a")}
+                                                </td>
+                                                <td>
+                                                    {DateTime.fromISO(poll.endsAt)
+                                                        .setZone(poll.timezone)
+                                                        .toFormat("EEE, MMM yyyy hh:mm a")}
+                                                </td>
                                                 <td>{poll.timezone}</td>
                                                 <td>{poll.state}</td>
                                                 <td>{poll.primaryOrganizerName}</td>
@@ -264,7 +283,10 @@ const Poll = () => {
                                                             <i className="fa fa-play"></i>
                                                         </div>
                                                         <div>
-                                                            <a href={`/poll/edit/${poll.id}`} title="Edit Poll">
+                                                            <a
+                                                                href={`/poll/edit/${poll.id}`}
+                                                                title="Edit Poll"
+                                                            >
                                                                 <i className="fa fa-edit"></i>
                                                             </a>
                                                         </div>
@@ -274,17 +296,19 @@ const Poll = () => {
                                                     </div>
                                                 </td>
                                             </tr>
-                                        )))}
+                                        ))}
                                 </tbody>
                             </table>
                             <div className="d-flex ml-4">
                                 <nav aria-label="Page navigation example">
                                     <ul className="pagination">
+
                                         {apiResponse?.data && ([...Array(apiResponse.totalPages)].map((x, i) =>
                                             <li className="page-item" key={i}>
                                                 <a className="page-link" page={i + 1} href=" " onClick={handlePagination}>{i + 1}</a>
                                             </li>
                                         ))}
+
                                     </ul>
                                 </nav>
                             </div>
@@ -292,7 +316,7 @@ const Poll = () => {
                     </div>
                 </div>
             </div>
-        </React.Fragment>
+        </>
     );
 };
 

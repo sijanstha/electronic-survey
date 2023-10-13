@@ -12,11 +12,17 @@ code {
     monospace;
 }
 
+.cursor-pointer{
+  cursor: pointer;
+}
+
 
 .filter-dropdown{
   padding: 10px;
   position: absolute;
   background: white;
   z-index: 99999;
-  right: 0
+  right: 0;
+  border-radius: 5px;
+  font-size: 14px;
 }

@@ -16,7 +16,7 @@ services:
   evs:
     build: .
     environment:
-      JWT_EXPIRATION_TIME: "60"
+      JWT_EXPIRATION_TIME: "1"
       JWT_SECRET_KEY: "secret"
       DATA_SOURCE_HOST: "db"
       DATA_SOURCE_PORT: "3306"
